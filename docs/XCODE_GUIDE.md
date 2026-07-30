@@ -5,7 +5,7 @@
 ## 先理解几个概念
 
 - **Project**：`TomatoBar.xcodeproj`，保存源文件、依赖和构建设置。
-- **Target**：要构建的产品。当前只有 `TomatoBar` 应用 Target。
+- **Target**：要构建的产品。当前有 `TomatoBar` 应用 Target 和 `TomatoBarTests` 单元测试 Target。
 - **Scheme**：告诉 Xcode 构建哪个 Target、使用哪种配置。
 - **Debug / Release**：Debug 用于开发调试；Release 用于最终交付。
 - **Bundle Identifier**：macOS 识别应用的唯一 ID，当前是 `com.github.ivoronin.TomatoBar`。
@@ -20,6 +20,15 @@
 5. 按 `Cmd-R` 启动 Debug 版本。
 6. 在右上角菜单栏找到番茄图标并验证功能。
 7. 按 `Cmd-.` 或点击 Xcode 左上角停止按钮结束调试。
+
+运行自动测试：
+
+1. 确认顶部 Scheme 是 `TomatoBar`，运行设备是 `My Mac`。
+2. 按 `Cmd-U`，Xcode 会构建应用并运行 `TomatoBarTests`。
+3. 左侧打开 `Test Navigator`（菱形图标）。所有测试右侧显示绿色对勾即为通过。
+4. 单个测试失败时，点击红色叉号查看完整错误；修复后点击测试名称旁的运行按钮重试。
+
+当前基线包含 7 个计时状态测试，覆盖启动、取消、工作结束、休息结束、停止于休息后和跳过休息。
 
 常用调试方法：
 

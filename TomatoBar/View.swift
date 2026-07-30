@@ -75,7 +75,7 @@ private struct SettingsView: View {
                                        comment: "Show timer in menu bar label"))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }.toggleStyle(.switch)
-                .onChange(of: timer.showTimerInMenuBar) { _ in
+                .onChange(of: timer.showTimerInMenuBar) {
                     timer.updateTimeLeft()
                 }
             Toggle(isOn: $launchAtLogin.isEnabled) {

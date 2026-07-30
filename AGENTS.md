@@ -6,7 +6,7 @@
 
 Application images and sounds live in `TomatoBar/Assets.xcassets`. Localized strings are grouped by locale in `TomatoBar/{en,ko,zh-Hans}.lproj`. `Icons/` contains source artwork and conversion tooling. Xcode project settings and pinned Swift Package dependencies are under `TomatoBar.xcodeproj/`.
 
-There is currently no test target. Add future unit tests under `TomatoBarTests/` rather than mixing test code into the app target.
+Unit tests live in `TomatoBarTests/` and run through the shared `TomatoBar` scheme. Keep test support code in that directory rather than mixing it into the app target.
 
 ## Product Plan & Delivery Rules
 

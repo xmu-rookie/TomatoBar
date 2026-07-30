@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B10000000000000000000001 /* TBTimerStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* TBTimerStateMachineTests.swift */; };
+		B1000000000000000000000D /* SwiftState in Frameworks */ = {isa = PBXBuildFile; productRef = 8A8CFE3F2821D8C300F9F303 /* SwiftState */; };
 		8A21B78C27EE31A20009E5DB /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A21B78B27EE31A20009E5DB /* App.swift */; };
 		8A21B78E27EE31A20009E5DB /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A21B78D27EE31A20009E5DB /* View.swift */; };
 		8A21B79027EE31A30009E5DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A21B78F27EE31A30009E5DB /* Assets.xcassets */; };
@@ -21,7 +23,19 @@
 		8AEE49AF2AA75A5E00243D2F /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AEE49AE2AA75A5E00243D2F /* Log.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B10000000000000000000008 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A21B78027EE31A20009E5DB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8A21B78727EE31A20009E5DB;
+			remoteInfo = TomatoBar;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		B10000000000000000000002 /* TBTimerStateMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TBTimerStateMachineTests.swift; sourceTree = "<group>"; };
+		B10000000000000000000003 /* TomatoBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TomatoBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A21B78827EE31A20009E5DB /* TomatoBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TomatoBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A21B78B27EE31A20009E5DB /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		8A21B78D27EE31A20009E5DB /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
@@ -38,6 +52,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B10000000000000000000004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000000000000000000000D /* SwiftState in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8A21B78527EE31A20009E5DB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -55,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				8A21B78A27EE31A20009E5DB /* TomatoBar */,
+				B10000000000000000000005 /* TomatoBarTests */,
 				8A21B78927EE31A20009E5DB /* Products */,
 				8A9F700D27EE3AED0012A1EC /* Frameworks */,
 			);
@@ -64,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				8A21B78827EE31A20009E5DB /* TomatoBar.app */,
+				B10000000000000000000003 /* TomatoBarTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -92,9 +116,37 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B10000000000000000000005 /* TomatoBarTests */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000002 /* TBTimerStateMachineTests.swift */,
+			);
+			path = TomatoBarTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B10000000000000000000006 /* TomatoBarTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1000000000000000000000C /* Build configuration list for PBXNativeTarget "TomatoBarTests" */;
+			buildPhases = (
+				B10000000000000000000007 /* Sources */,
+				B10000000000000000000004 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B10000000000000000000009 /* PBXTargetDependency */,
+			);
+			name = TomatoBarTests;
+			packageProductDependencies = (
+				8A8CFE3F2821D8C300F9F303 /* SwiftState */,
+			);
+			productName = TomatoBarTests;
+			productReference = B10000000000000000000003 /* TomatoBarTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8A21B78727EE31A20009E5DB /* TomatoBar */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8A21B79727EE31A30009E5DB /* Build configuration list for PBXNativeTarget "TomatoBar" */;
@@ -128,6 +180,10 @@
 				LastSwiftUpdateCheck = 1330;
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
+					B10000000000000000000006 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 8A21B78727EE31A20009E5DB;
+					};
 					8A21B78727EE31A20009E5DB = {
 						CreatedOnToolsVersion = 13.3;
 					};
@@ -154,6 +210,7 @@
 			projectRoot = "";
 			targets = (
 				8A21B78727EE31A20009E5DB /* TomatoBar */,
+				B10000000000000000000006 /* TomatoBarTests */,
 			);
 		};
 /* End PBXProject section */
@@ -193,6 +250,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B10000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* TBTimerStateMachineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8A21B78427EE31A20009E5DB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -209,6 +274,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B10000000000000000000009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8A21B78727EE31A20009E5DB /* TomatoBar */;
+			targetProxy = B10000000000000000000008 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		8AA54347293094AB002A47FC /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
@@ -223,6 +296,46 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		B1000000000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TomatoBar.app/Contents/MacOS/TomatoBar";
+				TEST_TARGET_NAME = TomatoBar;
+			};
+			name = Debug;
+		};
+		B1000000000000000000000B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TomatoBar.app/Contents/MacOS/TomatoBar";
+				TEST_TARGET_NAME = TomatoBar;
+			};
+			name = Release;
+		};
 		8A21B79527EE31A30009E5DB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -275,7 +388,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -331,7 +444,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -362,7 +475,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -397,7 +510,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBar;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -413,6 +526,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B1000000000000000000000C /* Build configuration list for PBXNativeTarget "TomatoBarTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1000000000000000000000A /* Debug */,
+				B1000000000000000000000B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8A21B78327EE31A20009E5DB /* Build configuration list for PBXProject "TomatoBar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

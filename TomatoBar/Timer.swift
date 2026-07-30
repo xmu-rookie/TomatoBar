@@ -12,7 +12,9 @@ class TBTimer: ObservableObject {
     // This preference is "hidden"
     @AppStorage("overrunTimeLimit") var overrunTimeLimit = -60.0
 
-    private var stateMachine = TBStateMachine(state: .idle)
+    private lazy var stateMachine = makeTBStateMachine { [weak self] in
+        self?.stopAfterBreak ?? false
+    }
     public let player = TBPlayer()
     private var consecutiveWorkIntervals: Int = 0
     private var notificationCenter = TBNotificationCenter()
@@ -43,18 +45,6 @@ class TBTimer: ObservableObject {
          *      timerFired (stopAfterBreak)
          *
          */
-        stateMachine.addRoutes(event: .startStop, transitions: [
-            .idle => .work, .work => .idle, .rest => .idle,
-        ])
-        stateMachine.addRoutes(event: .timerFired, transitions: [.work => .rest])
-        stateMachine.addRoutes(event: .timerFired, transitions: [.rest => .idle]) { _ in
-            self.stopAfterBreak
-        }
-        stateMachine.addRoutes(event: .timerFired, transitions: [.rest => .work]) { _ in
-            !self.stopAfterBreak
-        }
-        stateMachine.addRoutes(event: .skipRest, transitions: [.rest => .work])
-
         /*
          * "Finish" handlers are called when time interval ended
          * "End"    handlers are called when time interval ended or was cancelled
