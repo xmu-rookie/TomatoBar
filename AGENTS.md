@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-`TomatoBar/` contains the macOS application source. `App.swift` creates the menu-bar item and popover, `View.swift` defines the SwiftUI interface, `TimerEngine.swift` contains pure timer rules, and `Timer.swift` connects those rules to macOS side effects. Supporting concerns are separated into `Player.swift`, `Notifications.swift`, and `Log.swift`.
+`TomatoBar/` contains the macOS application source. `App.swift` creates the menu-bar item and popover, `View.swift` defines the SwiftUI interface, `TimerEngine.swift` contains pure timer rules, and `Timer.swift` connects those rules to macOS side effects. SwiftData session models, persistence, and history UI live in `SessionModels.swift`, `SessionRepository.swift`, and `SessionHistoryView.swift`. Supporting concerns are separated into `Player.swift`, `Notifications.swift`, and `Log.swift`.
 
 Application images and sounds live in `TomatoBar/Assets.xcassets`. Localized strings are grouped by locale in `TomatoBar/{en,ko,zh-Hans}.lproj`. `Icons/` contains source artwork and conversion tooling. Xcode project settings and pinned Swift Package dependencies are under `TomatoBar.xcodeproj/`.
 

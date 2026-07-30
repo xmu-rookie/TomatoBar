@@ -1,6 +1,6 @@
 # TomaTrace 产品与工程路线图
 
-> 状态：M2「可测试的计时核心」已完成，下一阶段为 M3「本地 session」
+> 状态：M3「本地 session」已完成，下一阶段为 M4「Todoist 连接」
 >
 > 更新规则：需求、架构或阶段状态发生变化时，必须在对应代码提交中同步更新本文。
 
@@ -94,13 +94,23 @@ TomaTrace 将在 TomatoBar 的菜单栏番茄钟基础上，提供与 Pomist 同
 - Swift Package 依赖图只保留 `LaunchAtLogin` 和 `KeyboardShortcuts`；
 - Debug、Release 和运行时启动检查通过。
 
-### M3：本地 session（当前）
+### M3：本地 session（已完成）
 
-- 引入 SwiftData 模型、repository 和迁移容器。
-- 每次工作阶段停止或完成时保存 session；增加结束备注界面和历史列表。
+- [x] 引入 SwiftData `FocusSession`、`FocusSegment`、repository 和持久化容器。
+- [x] 每次工作阶段停止或完成时先保存 session，再显示可选备注。
+- [x] 暂停区段独立记录且不计入有效专注时长；系统严重超时的工作不误记。
+- [x] 增加本地历史窗口、备注保存和 session 删除。
 - 验收：重启应用后记录仍存在，暂停不计时，短 session 的时长和番茄数正确。
 
-### M4：Todoist 连接
+2026-07-30 自动验证记录：
+
+- `SessionRepositoryTests` 5 项通过，包括关闭并重新打开磁盘容器后记录仍存在；
+- `FocusSessionTrackerTests` 4 项通过，包括暂停区段、迟到 tick 裁剪和手动开始等待；
+- 加上 `TimerEngineTests` 后总计 20 项测试通过；
+- session 在结束时先原子保存，备注为空也不会丢失记录；
+- Debug、Release、三种本地化及 Debug 应用启动检查通过。
+
+### M4：Todoist 连接（当前）
 
 - 增加设置界面、Keychain Token 存储、连接测试和清除凭据。
 - 增加网络错误分类和脱敏日志，并开启 App Sandbox 出站网络能力。

@@ -36,10 +36,7 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
         popover.behavior = .transient
         popover.contentViewController = NSViewController()
         popover.contentViewController?.view = NSHostingView(rootView: view)
-        if let contentViewController = popover.contentViewController {
-            popover.contentSize.height = contentViewController.view.intrinsicContentSize.height
-            popover.contentSize.width = 240
-        }
+        resizePopoverToFit()
 
         statusBarItem = NSStatusBar.system.statusItem(
             withLength: NSStatusItem.variableLength
@@ -66,6 +63,18 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
 
     func setIcon(name: NSImage.Name) {
         statusBarItem?.button?.image = NSImage(named: name)
+    }
+
+    func resizePopoverToFit() {
+        guard let view = popover.contentViewController?.view else {
+            return
+        }
+        view.layoutSubtreeIfNeeded()
+        let fittingSize = view.fittingSize
+        popover.contentSize = NSSize(
+            width: max(240, fittingSize.width),
+            height: fittingSize.height
+        )
     }
 
     func showPopover(_: AnyObject?) {

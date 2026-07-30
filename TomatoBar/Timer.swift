@@ -19,8 +19,13 @@ final class TBTimer: ObservableObject {
     @Published private(set) var status = TimerEngine.Status.idle
     @Published private(set) var phase: TimerEngine.Phase?
     @Published private(set) var timer: DispatchSourceTimer?
+    @Published private(set) var pendingNoteSessionID: UUID?
+    @Published var pendingNoteText = ""
+    @Published private(set) var persistenceErrorMessage: String?
 
     private var engine = TimerEngine()
+    private var sessionTracker = FocusSessionTracker()
+    private let sessionRepository: SessionRepository
     private let notificationCenter = TBNotificationCenter()
     private let timerFormatter = DateComponentsFormatter()
 
@@ -36,7 +41,14 @@ final class TBTimer: ObservableObject {
         phase?.isRest == true
     }
 
-    init() {
+    var isAwaitingSessionNote: Bool {
+        pendingNoteSessionID != nil
+    }
+
+    init(
+        sessionRepository: SessionRepository = SwiftDataSessionRepository()
+    ) {
+        self.sessionRepository = sessionRepository
         timerFormatter.unitsStyle = .positional
         timerFormatter.allowedUnits = [.minute, .second]
         timerFormatter.zeroFormattingBehavior = .pad
@@ -116,6 +128,29 @@ final class TBTimer: ObservableObject {
         publishEngineState(at: Date())
     }
 
+    func savePendingNote() {
+        guard let pendingNoteSessionID else {
+            return
+        }
+        do {
+            try sessionRepository.updateNote(
+                sessionID: pendingNoteSessionID,
+                note: pendingNoteText
+            )
+            clearPendingNote()
+        } catch {
+            persistenceErrorMessage = error.localizedDescription
+        }
+    }
+
+    func skipPendingNote() {
+        clearPendingNote()
+    }
+
+    func dismissPersistenceError() {
+        persistenceErrorMessage = nil
+    }
+
     private var configuration: TimerEngine.Configuration {
         TimerEngine.Configuration(
             workDuration: TimeInterval(workIntervalLength * 60),
@@ -132,10 +167,11 @@ final class TBTimer: ObservableObject {
         let now = Date()
         let timeUntilDeadline = engine.timeUntilDeadline(at: now)
         if timeUntilDeadline <= 0 {
-            let transition = timeUntilDeadline < overrunTimeLimit
+            let isOverrun = timeUntilDeadline < overrunTimeLimit
+            let transition = isOverrun
                 ? engine.stop(at: now)
                 : engine.completeCurrentInterval(at: now)
-            apply(transition, at: now)
+            apply(transition, at: now, recordWork: !isOverrun)
         } else {
             publishEngineState(at: now)
         }
@@ -153,11 +189,20 @@ final class TBTimer: ObservableObject {
         }
     }
 
-    private func apply(_ transition: TimerEngine.Transition?, at date: Date) {
+    private func apply(
+        _ transition: TimerEngine.Transition?,
+        at date: Date,
+        recordWork: Bool = true
+    ) {
         guard let transition else {
             return
         }
 
+        let sessionDraft = sessionTracker.consume(
+            transition: transition,
+            at: date,
+            recordWork: recordWork
+        )
         stopTicker()
         if transition.from.phase == .work, transition.from.status == .running {
             player.stopTicking()
@@ -183,6 +228,9 @@ final class TBTimer: ObservableObject {
         logger.append(event: TBLogEventTransition(transition: transition))
         publishEngineState(at: date)
         applyDestinationPresentation(for: transition)
+        if let sessionDraft {
+            persistSession(sessionDraft)
+        }
     }
 
     private func applyDestinationPresentation(for transition: TimerEngine.Transition) {
@@ -278,5 +326,31 @@ final class TBTimer: ObservableObject {
             ),
             category: .restFinished
         )
+    }
+
+    private func persistSession(_ draft: FocusSessionDraft) {
+        do {
+            pendingNoteSessionID = try sessionRepository.save(draft)
+            pendingNoteText = ""
+            persistenceErrorMessage = nil
+            DispatchQueue.main.async {
+                TBStatusItem.shared.resizePopoverToFit()
+                TBStatusItem.shared.showPopover(nil)
+            }
+        } catch {
+            persistenceErrorMessage = error.localizedDescription
+            DispatchQueue.main.async {
+                TBStatusItem.shared.resizePopoverToFit()
+                TBStatusItem.shared.showPopover(nil)
+            }
+        }
+    }
+
+    private func clearPendingNote() {
+        pendingNoteSessionID = nil
+        pendingNoteText = ""
+        DispatchQueue.main.async {
+            TBStatusItem.shared.resizePopoverToFit()
+        }
     }
 }

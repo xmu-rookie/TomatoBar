@@ -22,6 +22,7 @@
 "TBPopoverView.intervals.label" = "时长";
 "TBPopoverView.settings.label" = "设置";
 "TBPopoverView.sounds.label" = "声音";
+"TBPopoverView.history.label" = "专注历史";
 "TBPopoverView.about.label" = "关于";
 "TBPopoverView.quit.label" = "退出";
 "TBTimer.onRestStart.title" = "时间到";
@@ -30,3 +31,9 @@
 "TBTimer.onRestStart.skip.title" = "跳过";
 "TBTimer.onRestFinish.title" = "休息结束";
 "TBTimer.onRestFinish.body" = "继续努力!";
+"SessionNote.prompt" = "本次专注完成了什么？";
+"SessionNote.placeholder" = "可选备注";
+"SessionNote.save.label" = "保存";
+"SessionNote.skip.label" = "跳过";
+"SessionHistory.title" = "专注历史";
+"SessionHistory.empty.title" = "还没有专注记录";

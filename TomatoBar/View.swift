@@ -142,7 +142,7 @@ private enum ChildView {
 }
 
 struct TBPopoverView: View {
-    @ObservedObject var timer = TBTimer()
+    @StateObject private var timer = TBTimer()
     @State private var buttonHovered = false
     @State private var activeChildView = ChildView.intervals
 
@@ -151,9 +151,68 @@ struct TBPopoverView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            if timer.isAwaitingSessionNote {
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(NSLocalizedString(
+                            "SessionNote.prompt",
+                            comment: "Session note prompt"
+                        ))
+                        .font(.headline)
+                        TextField(
+                            NSLocalizedString(
+                                "SessionNote.placeholder",
+                                comment: "Session note placeholder"
+                            ),
+                            text: $timer.pendingNoteText
+                        )
+                        .onSubmit {
+                            timer.savePendingNote()
+                        }
+                        HStack {
+                            Button {
+                                timer.savePendingNote()
+                            } label: {
+                                Text(NSLocalizedString(
+                                    "SessionNote.save.label",
+                                    comment: "Save session note label"
+                                ))
+                                .frame(maxWidth: .infinity)
+                            }
+                            Button {
+                                timer.skipPendingNote()
+                            } label: {
+                                Text(NSLocalizedString(
+                                    "SessionNote.skip.label",
+                                    comment: "Skip session note label"
+                                ))
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                    }
+                }
+            }
+
+            if let persistenceErrorMessage = timer.persistenceErrorMessage {
+                HStack {
+                    Text(persistenceErrorMessage)
+                        .foregroundStyle(.red)
+                        .lineLimit(2)
+                    Spacer()
+                    Button {
+                        timer.dismissPersistenceError()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
             Button {
                 timer.startStop()
-                TBStatusItem.shared.closePopover(nil)
+                if !timer.isAwaitingSessionNote {
+                    TBStatusItem.shared.closePopover(nil)
+                }
             } label: {
                 Text(timer.isActive ?
                      (buttonHovered ? stopLabel : timer.timeLeftString) :
@@ -224,6 +283,16 @@ struct TBPopoverView: View {
 
             Group {
                 Button {
+                    SessionHistoryWindowController.shared.show()
+                } label: {
+                    Text(NSLocalizedString(
+                        "TBPopoverView.history.label",
+                        comment: "History label"
+                    ))
+                    Spacer()
+                }
+                .buttonStyle(.plain)
+                Button {
                     NSApp.activate(ignoringOtherApps: true)
                     NSApp.orderFrontStandardAboutPanel()
                 } label: {
@@ -263,6 +332,9 @@ struct TBPopoverView: View {
             /* Use values from GeometryReader */
 //            .frame(width: 240, height: 276)
             .padding(12)
+            .onChange(of: activeChildView) {
+                TBStatusItem.shared.resizePopoverToFit()
+            }
     }
 }
 

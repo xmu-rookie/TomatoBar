@@ -22,6 +22,7 @@
 "TBPopoverView.intervals.label" = "간격";
 "TBPopoverView.settings.label" = "설정";
 "TBPopoverView.sounds.label" = "사운드";
+"TBPopoverView.history.label" = "집중 기록";
 "TBPopoverView.about.label" = "앱 정보";
 "TBPopoverView.quit.label" = "종료";
 "TBTimer.onRestStart.title" = "시간 종료";
@@ -30,3 +31,9 @@
 "TBTimer.onRestStart.skip.title" = "건너뛰기";
 "TBTimer.onRestFinish.title" = "휴식 시간 종료";
 "TBTimer.onRestFinish.body" = "다시 작업을 시작하세요!";
+"SessionNote.prompt" = "이번 집중에서 무엇을 했나요?";
+"SessionNote.placeholder" = "선택 메모";
+"SessionNote.save.label" = "저장";
+"SessionNote.skip.label" = "건너뛰기";
+"SessionHistory.title" = "집중 기록";
+"SessionHistory.empty.title" = "아직 집중 기록이 없습니다";
