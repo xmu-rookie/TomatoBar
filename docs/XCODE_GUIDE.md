@@ -4,6 +4,33 @@
 应用：运行后不会出现在 Dock 中，入口是屏幕右上角的番茄图标。Xcode 内部
 仍保留 `TomatoBar` Target 和 Scheme 名称，以减少无意义的工程文件改名。
 
+## 第一次打开项目
+
+不需要在 Xcode 中创建新项目。需要打开的是仓库里的
+`TomatoBar.xcodeproj`：
+
+1. 打开 Finder；
+2. 按 `Cmd-Shift-G`，输入：
+
+   ```text
+   /Users/linyangfeng/IdeaProjects/engineering/vibe/TomatoBar
+   ```
+
+3. 点击“前往”，然后双击 `TomatoBar.xcodeproj`；
+4. 如果 Xcode 是第一次启动，按提示同意许可并安装附加组件；
+5. 等待顶部的 `Resolving Package Graph` 消失，再开始运行。
+
+也可以打开“终端”，执行：
+
+```bash
+cd /Users/linyangfeng/IdeaProjects/engineering/vibe/TomatoBar
+open TomatoBar.xcodeproj
+```
+
+以后关闭 Xcode 后，仍然用同一个 `TomatoBar.xcodeproj` 重新打开项目。
+不要双击某个 `.swift` 文件，也不要选择 Xcode 欢迎页里的
+`Create a new Xcode project`。
+
 ## 先理解几个概念
 
 - **Project**：`TomatoBar.xcodeproj`，保存源文件、依赖和构建设置。
@@ -15,13 +42,23 @@
 
 ## 日常运行与调试
 
-1. 双击 `TomatoBar.xcodeproj`。
+1. 按上一节的方法打开 `TomatoBar.xcodeproj`。
 2. 等待 Xcode 完成 `Resolving Package Graph`。
 3. 顶部选择 `TomatoBar > My Mac`。
 4. 按 `Cmd-B` 编译；成功时显示 `Build Succeeded`。
 5. 按 `Cmd-R` 启动 Debug 版本。
 6. 在右上角菜单栏找到番茄图标并验证功能。
 7. 按 `Cmd-.` 或点击 Xcode 左上角停止按钮结束调试。
+
+最常用的操作只有四个：
+
+- `Cmd-R`：编译并临时运行最新代码；
+- `Cmd-.`：停止 Xcode 启动的 TomaTrace；
+- `Cmd-U`：运行全部自动测试；
+- `Product > Archive`：只在准备导出长期使用的正式版本时执行。
+
+普通代码改动后只需再次按 `Cmd-R`，不需要卸载、安装或重新 Archive。
+Archive 不是日常调试步骤，而是“制作正式成品”的步骤。
 
 运行自动测试：
 
@@ -86,7 +123,15 @@ Keychain Token 和历史不会自动迁移。这是有意隔离，避免开发�
 6. 退出 Xcode 中运行的 Debug 版本，把导出的 `.app` 拖入 `/Applications`。
 7. 从“应用程序”启动并完成一次完整计时验证；确认路径固定后再启用“登录时启动”。
 
-这个版本适合自己的电脑，不适合直接发给其他人。更新时先退出旧版本，再用新 `.app` 替换。
+这个版本适合自己的电脑，不适合直接发给其他人。以后更新时不必卸载：
+
+1. 退出 Xcode 调试版和“应用程序”中的旧版 TomaTrace；
+2. 导出新的 `TomaTrace.app`；
+3. 把它拖入“应用程序”；
+4. Finder 询问时选择“替换”。
+
+只要 Bundle Identifier 仍是 `com.linyangfeng.tomatrace`，直接替换不会主动
+删除专注历史、设置或 Keychain 中的 Todoist Token。
 
 ## 发给其他 Mac 用户
 
