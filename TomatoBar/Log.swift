@@ -19,10 +19,34 @@ class TBLogEventTransition: TBLogEvent {
     private let fromState: String
     private let toState: String
 
-    init(fromContext ctx: TBStateMachine.Context) {
-        event = "\(ctx.event!)"
-        fromState = "\(ctx.fromState)"
-        toState = "\(ctx.toState)"
+    init(transition: TimerEngine.Transition) {
+        event = Self.eventName(for: transition.reason)
+        fromState = Self.stateName(for: transition.from)
+        toState = Self.stateName(for: transition.to)
+    }
+
+    private static func eventName(for reason: TimerEngine.Reason) -> String {
+        switch reason {
+        case .started, .stopped:
+            "startStop"
+        case .intervalCompleted:
+            "timerFired"
+        case .restSkipped:
+            "skipRest"
+        case .paused:
+            "pause"
+        case .resumed:
+            "resume"
+        }
+    }
+
+    private static func stateName(for snapshot: TimerEngine.Snapshot) -> String {
+        guard let phase = snapshot.phase else {
+            return "idle"
+        }
+        return snapshot.status == .paused
+            ? "\(phase.rawValue)Paused"
+            : phase.rawValue
     }
 }
 

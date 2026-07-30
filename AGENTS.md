@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-`TomatoBar/` contains the macOS application source. `App.swift` creates the menu-bar item and popover, `View.swift` defines the SwiftUI interface, and `Timer.swift` owns timer and state-machine behavior. Supporting concerns are separated into `Player.swift`, `Notifications.swift`, `State.swift`, and `Log.swift`.
+`TomatoBar/` contains the macOS application source. `App.swift` creates the menu-bar item and popover, `View.swift` defines the SwiftUI interface, `TimerEngine.swift` contains pure timer rules, and `Timer.swift` connects those rules to macOS side effects. Supporting concerns are separated into `Player.swift`, `Notifications.swift`, and `Log.swift`.
 
 Application images and sounds live in `TomatoBar/Assets.xcassets`. Localized strings are grouped by locale in `TomatoBar/{en,ko,zh-Hans}.lproj`. `Icons/` contains source artwork and conversion tooling. Xcode project settings and pinned Swift Package dependencies are under `TomatoBar.xcodeproj/`.
 
@@ -23,7 +23,7 @@ Never place Todoist credentials in source code, fixtures, logs, screenshots, bui
 - `xcodebuild -project TomatoBar.xcodeproj -scheme TomatoBar -configuration Release CODE_SIGNING_ALLOWED=NO build` checks the optimized configuration used by CI.
 - `xcodebuild test -project TomatoBar.xcodeproj -scheme TomatoBar -destination 'platform=macOS'` should be used once a test target is added.
 
-Swift Package Manager resolves `LaunchAtLogin`, `KeyboardShortcuts`, and `SwiftState`; keep `Package.resolved` committed when dependency versions change.
+Swift Package Manager resolves `LaunchAtLogin` and `KeyboardShortcuts`; keep `Package.resolved` committed when dependency versions change.
 
 ## Coding Style & Naming Conventions
 

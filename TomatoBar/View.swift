@@ -48,6 +48,18 @@ private struct IntervalsView: View {
             }
             .help(NSLocalizedString("IntervalsView.workIntervalsInSet.help",
                                     comment: "Work intervals in set hint"))
+            Toggle(isOn: $timer.autoStartBreaks) {
+                Text(NSLocalizedString("SettingsView.autoStartBreaks.label",
+                                       comment: "Auto-start breaks label"))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }.toggleStyle(.switch)
+            Toggle(isOn: $timer.autoStartWork) {
+                Text(NSLocalizedString("SettingsView.autoStartWork.label",
+                                       comment: "Auto-start work label"))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .toggleStyle(.switch)
+            .disabled(timer.stopAfterBreak)
             Spacer().frame(minHeight: 0)
         }
         .padding(4)
@@ -143,7 +155,7 @@ struct TBPopoverView: View {
                 timer.startStop()
                 TBStatusItem.shared.closePopover(nil)
             } label: {
-                Text(timer.timer != nil ?
+                Text(timer.isActive ?
                      (buttonHovered ? stopLabel : timer.timeLeftString) :
                         startLabel)
                     /*
@@ -160,6 +172,32 @@ struct TBPopoverView: View {
             }
             .controlSize(.large)
             .keyboardShortcut(.defaultAction)
+
+            HStack {
+                Button {
+                    timer.pauseResume()
+                } label: {
+                    Text(NSLocalizedString(
+                        timer.isPaused
+                            ? "TBPopoverView.resume.label"
+                            : "TBPopoverView.pause.label",
+                        comment: timer.isPaused ? "Resume label" : "Pause label"
+                    ))
+                    .frame(maxWidth: .infinity)
+                }
+                .disabled(!timer.isActive)
+
+                Button {
+                    timer.skipRest()
+                } label: {
+                    Text(NSLocalizedString(
+                        "TBPopoverView.skipRest.label",
+                        comment: "Skip rest label"
+                    ))
+                    .frame(maxWidth: .infinity)
+                }
+                .disabled(!timer.isResting)
+            }
 
             Picker("", selection: $activeChildView) {
                 Text(NSLocalizedString("TBPopoverView.intervals.label",

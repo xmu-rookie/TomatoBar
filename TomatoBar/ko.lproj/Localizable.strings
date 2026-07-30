@@ -7,6 +7,8 @@
 "IntervalsView.workIntervalsInSet.help" = "긴 휴식 시간 전까지 작업 시간을 몇 번 반복 할 것인지";
 "SettingsView.shortcut.label" = "단축키";
 "SettingsView.stopAfterBreak.label" = "휴식 후 중지";
+"SettingsView.autoStartBreaks.label" = "휴식 자동 시작";
+"SettingsView.autoStartWork.label" = "작업 자동 시작";
 "SettingsView.showTimerInMenuBar.label" = "메뉴 막대에서 타이머 보기";
 "SettingsView.launchAtLogin.label" = "로그인 후 실행";
 "SoundsView.isWindupEnabled.label" = "Windup";
@@ -14,6 +16,9 @@
 "SoundsView.isTickingEnabled.label" = "Ticking";
 "TBPopoverView.start.label" = "시작";
 "TBPopoverView.stop.label" = "중지";
+"TBPopoverView.pause.label" = "일시 정지";
+"TBPopoverView.resume.label" = "계속";
+"TBPopoverView.skipRest.label" = "휴식 건너뛰기";
 "TBPopoverView.intervals.label" = "간격";
 "TBPopoverView.settings.label" = "설정";
 "TBPopoverView.sounds.label" = "사운드";
