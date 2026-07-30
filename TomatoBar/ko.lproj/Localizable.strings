@@ -36,6 +36,7 @@
 "SessionNote.placeholder" = "선택 메모";
 "SessionNote.save.label" = "저장";
 "SessionNote.skip.label" = "건너뛰기";
+"SessionNote.saveAndComplete.label" = "저장하고 Todoist 작업 완료";
 "SessionHistory.title" = "집중 기록";
 "SessionHistory.empty.title" = "아직 집중 기록이 없습니다";
 "TodoistSettings.token.placeholder" = "개인 API 토큰";
@@ -72,3 +73,15 @@
 "TodoistTasks.notConnected.status" = "새로 고치려면 Todoist를 연결하세요. 캐시된 작업은 계속 사용할 수 있습니다.";
 "TodoistTasks.cacheError" = "로컬 Todoist 캐시를 읽을 수 없습니다.";
 "TodoistTasks.syncError" = "Todoist를 동기화할 수 없습니다. 캐시된 작업은 계속 사용할 수 있습니다.";
+"TodoistComment.session.format" = "🍅 이번 집중: %.1f 포모도로";
+"TodoistComment.summary.format" = "🍅 누적 집중: %.1f 포모도로";
+"TodoistWrite.complete.label" = "선택한 작업 완료";
+"TodoistWrite.undo.label" = "Todoist 완료 취소";
+"TodoistWrite.syncing.status" = "Todoist 업데이트 전송 중…";
+"TodoistWrite.pending.status" = "%d개의 Todoist 업데이트가 재시도 대기 중입니다.";
+"TodoistWrite.failed.status" = "%d개의 Todoist 업데이트를 확인해야 합니다.";
+"TodoistWrite.retry.label" = "재시도";
+"SessionHistory.sync.localOnly" = "로컬에 저장됨";
+"SessionHistory.sync.pending" = "Todoist 동기화 대기 중";
+"SessionHistory.sync.synced" = "Todoist와 동기화됨";
+"SessionHistory.sync.failed" = "Todoist 동기화 실패";

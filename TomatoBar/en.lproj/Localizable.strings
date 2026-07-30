@@ -36,6 +36,7 @@
 "SessionNote.placeholder" = "Optional note";
 "SessionNote.save.label" = "Save";
 "SessionNote.skip.label" = "Skip";
+"SessionNote.saveAndComplete.label" = "Save and complete Todoist task";
 "SessionHistory.title" = "Focus History";
 "SessionHistory.empty.title" = "No focus sessions yet";
 "TodoistSettings.token.placeholder" = "Personal API token";
@@ -72,3 +73,15 @@
 "TodoistTasks.notConnected.status" = "Connect Todoist to refresh. Cached tasks remain available.";
 "TodoistTasks.cacheError" = "The local Todoist cache could not be read.";
 "TodoistTasks.syncError" = "Todoist could not be synchronized. Cached tasks remain available.";
+"TodoistComment.session.format" = "🍅 Focus session: %.1f pomodoro";
+"TodoistComment.summary.format" = "🍅 Total focus: %.1f pomodoro";
+"TodoistWrite.complete.label" = "Complete selected task";
+"TodoistWrite.undo.label" = "Undo Todoist completion";
+"TodoistWrite.syncing.status" = "Sending Todoist updates…";
+"TodoistWrite.pending.status" = "%d Todoist update(s) queued for retry.";
+"TodoistWrite.failed.status" = "%d Todoist update(s) need attention.";
+"TodoistWrite.retry.label" = "Retry";
+"SessionHistory.sync.localOnly" = "Stored locally";
+"SessionHistory.sync.pending" = "Waiting to sync with Todoist";
+"SessionHistory.sync.synced" = "Synced with Todoist";
+"SessionHistory.sync.failed" = "Todoist sync failed";

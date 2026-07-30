@@ -1,6 +1,7 @@
 import KeyboardShortcuts
 import SwiftUI
 
+@MainActor
 final class TBTimer: ObservableObject {
     @AppStorage("stopAfterBreak") var stopAfterBreak = false
     @AppStorage("autoStartBreaks") var autoStartBreaks = true
@@ -27,6 +28,7 @@ final class TBTimer: ObservableObject {
     private var engine = TimerEngine()
     private var sessionTracker = FocusSessionTracker()
     private let sessionRepository: SessionRepository
+    private let outboxProcessor: TodoistOutboxProcessing
     private let notificationCenter = TBNotificationCenter()
     private let timerFormatter = DateComponentsFormatter()
 
@@ -47,9 +49,12 @@ final class TBTimer: ObservableObject {
     }
 
     init(
-        sessionRepository: SessionRepository = SwiftDataSessionRepository()
+        sessionRepository: SessionRepository = SwiftDataSessionRepository(),
+        outboxProcessor: TodoistOutboxProcessing? = nil
     ) {
         self.sessionRepository = sessionRepository
+        self.outboxProcessor =
+            outboxProcessor ?? TodoistOutboxProcessor.shared
         timerFormatter.unitsStyle = .positional
         timerFormatter.allowedUnits = [.minute, .second]
         timerFormatter.zeroFormattingBehavior = .pad
@@ -139,6 +144,9 @@ final class TBTimer: ObservableObject {
                 note: pendingNoteText
             )
             clearPendingNote()
+            Task {
+                await outboxProcessor.process()
+            }
         } catch {
             persistenceErrorMessage = error.localizedDescription
         }
@@ -146,6 +154,9 @@ final class TBTimer: ObservableObject {
 
     func skipPendingNote() {
         clearPendingNote()
+        Task {
+            await outboxProcessor.process()
+        }
     }
 
     func dismissPersistenceError() {

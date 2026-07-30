@@ -11,6 +11,8 @@ final class SessionRepositoryTests: XCTestCase {
         container = try ModelContainer(
             for: FocusSession.self,
             FocusSegment.self,
+            PendingTodoistCommand.self,
+            TodoistTaskSummary.self,
             configurations: configuration
         )
         repository = SwiftDataSessionRepository(
@@ -121,6 +123,89 @@ final class SessionRepositoryTests: XCTestCase {
         XCTAssertEqual(saved.taskContent, "Write report")
         XCTAssertEqual(saved.todoistProjectID, "project-1")
         XCTAssertEqual(saved.projectName, "Work")
+        XCTAssertEqual(saved.syncState, .pending)
+    }
+
+    func testTaskSessionAtomicallyQueuesSessionAndSummaryComments() throws {
+        let draft = makeTodoistDraft()
+
+        try repository.save(draft)
+
+        let context = ModelContext(container)
+        let commands = try context.fetch(
+            FetchDescriptor<PendingTodoistCommand>()
+        )
+        let summary = try XCTUnwrap(
+            context.fetch(FetchDescriptor<TodoistTaskSummary>()).first
+        )
+        XCTAssertEqual(commands.count, 2)
+        XCTAssertEqual(
+            Set(commands.map(\.kind)),
+            Set([.sessionCommentAdd, .summaryCommentAdd])
+        )
+        XCTAssertTrue(commands.allSatisfy { $0.state == .pending })
+        XCTAssertEqual(summary.taskID, "task-1")
+        XCTAssertEqual(summary.tomatoCount, 0.2)
+    }
+
+    func testUpdatingNoteUpdatesUnsentSessionComment() throws {
+        let draft = makeTodoistDraft()
+        try repository.save(draft)
+
+        try repository.updateNote(
+            sessionID: draft.id,
+            note: "  Finished report  "
+        )
+
+        let context = ModelContext(container)
+        let command = try XCTUnwrap(
+            context.fetch(FetchDescriptor<PendingTodoistCommand>())
+                .first { $0.kind == .sessionCommentAdd }
+        )
+        XCTAssertTrue(command.content?.contains("Finished report") == true)
+        XCTAssertEqual(try repository.fetchAll().first?.note, "Finished report")
+    }
+
+    func testTwoSessionsCoalesceOneSummaryComment() throws {
+        let first = makeTodoistDraft()
+        let second = makeTodoistDraft(
+            startedAt: Date(timeIntervalSince1970: 2_000)
+        )
+        try repository.save(first)
+        try repository.save(second)
+
+        let context = ModelContext(container)
+        let commands = try context.fetch(
+            FetchDescriptor<PendingTodoistCommand>()
+        )
+        XCTAssertEqual(
+            commands.filter { $0.kind == .sessionCommentAdd }.count,
+            2
+        )
+        XCTAssertEqual(
+            commands.filter { $0.kind == .summaryCommentAdd }.count,
+            1
+        )
+        XCTAssertEqual(
+            try context.fetch(FetchDescriptor<TodoistTaskSummary>())
+                .first?.tomatoCount,
+            0.4
+        )
+    }
+
+    func testDeletingUnsentOnlySessionRemovesItsOutboxAndSummary() throws {
+        let draft = makeTodoistDraft()
+        try repository.save(draft)
+
+        try repository.delete(sessionID: draft.id)
+
+        let context = ModelContext(container)
+        XCTAssertTrue(
+            try context.fetch(FetchDescriptor<PendingTodoistCommand>()).isEmpty
+        )
+        XCTAssertTrue(
+            try context.fetch(FetchDescriptor<TodoistTaskSummary>()).isEmpty
+        )
     }
 
     func testSessionSurvivesContainerReopen() throws {
@@ -172,7 +257,12 @@ final class SessionRepositoryTests: XCTestCase {
     private func makeDiskRepository(
         storeURL: URL
     ) throws -> SwiftDataSessionRepository {
-        let schema = Schema([FocusSession.self, FocusSegment.self])
+        let schema = Schema([
+            FocusSession.self,
+            FocusSegment.self,
+            PendingTodoistCommand.self,
+            TodoistTaskSummary.self,
+        ])
         let configuration = ModelConfiguration(
             "SessionRepositoryTests",
             schema: schema,
@@ -184,5 +274,24 @@ final class SessionRepositoryTests: XCTestCase {
             configurations: configuration
         )
         return SwiftDataSessionRepository(context: ModelContext(container))
+    }
+
+    private func makeTodoistDraft(
+        startedAt: Date = Date(timeIntervalSince1970: 1_000)
+    ) -> FocusSessionDraft {
+        let draft = makeDraft(startedAt: startedAt)
+        return FocusSessionDraft(
+            id: draft.id,
+            startedAt: draft.startedAt,
+            endedAt: draft.endedAt,
+            activeDuration: draft.activeDuration,
+            tomatoCount: draft.tomatoCount,
+            completedInterval: draft.completedInterval,
+            todoistTaskID: "task-1",
+            taskContent: "Write report",
+            todoistProjectID: "project-1",
+            projectName: "Work",
+            segments: draft.segments
+        )
     }
 }

@@ -36,6 +36,7 @@
 "SessionNote.placeholder" = "可选备注";
 "SessionNote.save.label" = "保存";
 "SessionNote.skip.label" = "跳过";
+"SessionNote.saveAndComplete.label" = "保存并完成 Todoist 任务";
 "SessionHistory.title" = "专注历史";
 "SessionHistory.empty.title" = "还没有专注记录";
 "TodoistSettings.token.placeholder" = "个人 API Token";
@@ -72,3 +73,15 @@
 "TodoistTasks.notConnected.status" = "连接 Todoist 后可刷新；已有缓存仍可使用。";
 "TodoistTasks.cacheError" = "无法读取本地 Todoist 缓存。";
 "TodoistTasks.syncError" = "无法同步 Todoist，已有缓存仍可使用。";
+"TodoistComment.session.format" = "🍅 本次专注：%.1f 个番茄";
+"TodoistComment.summary.format" = "🍅 累计专注：%.1f 个番茄";
+"TodoistWrite.complete.label" = "完成所选任务";
+"TodoistWrite.undo.label" = "撤销 Todoist 完成操作";
+"TodoistWrite.syncing.status" = "正在发送 Todoist 更新…";
+"TodoistWrite.pending.status" = "%d 条 Todoist 更新已排队等待重试。";
+"TodoistWrite.failed.status" = "%d 条 Todoist 更新需要处理。";
+"TodoistWrite.retry.label" = "重试";
+"SessionHistory.sync.localOnly" = "仅保存在本地";
+"SessionHistory.sync.pending" = "等待同步到 Todoist";
+"SessionHistory.sync.synced" = "已同步到 Todoist";
+"SessionHistory.sync.failed" = "Todoist 同步失败";

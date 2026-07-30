@@ -36,9 +36,13 @@ struct SessionHistoryView: View {
 
     private func deleteSessions(at offsets: IndexSet) {
         for index in offsets {
-            modelContext.delete(sessions[index])
+            try? SwiftDataSessionRepository(context: modelContext)
+                .delete(sessionID: sessions[index].id)
         }
-        try? modelContext.save()
+        TodoistOutboxProcessor.shared.refreshState()
+        Task {
+            await TodoistOutboxProcessor.shared.process()
+        }
     }
 }
 
@@ -57,6 +61,11 @@ private struct SessionHistoryRow: View {
                 Spacer()
                 Text(summary)
                     .foregroundStyle(.secondary)
+                if session.todoistTaskID != nil {
+                    Image(systemName: syncImage)
+                        .foregroundStyle(syncColor)
+                        .help(syncHelp)
+                }
             }
             if let taskContent = session.taskContent {
                 HStack(spacing: 4) {
@@ -84,6 +93,37 @@ private struct SessionHistoryRow: View {
             .number.precision(.fractionLength(0 ... 1))
         )
         return "\(duration) · 🍅 \(tomatoes)"
+    }
+
+    private var syncImage: String {
+        switch session.syncState {
+        case .localOnly:
+            return "icloud.slash"
+        case .pending:
+            return "arrow.triangle.2.circlepath"
+        case .synced:
+            return "checkmark.icloud"
+        case .failed:
+            return "exclamationmark.icloud"
+        }
+    }
+
+    private var syncColor: Color {
+        switch session.syncState {
+        case .failed:
+            return .red
+        case .pending:
+            return .orange
+        default:
+            return .secondary
+        }
+    }
+
+    private var syncHelp: String {
+        NSLocalizedString(
+            "SessionHistory.sync.\(session.syncState.rawValue)",
+            comment: "Session Todoist sync state"
+        )
     }
 }
 

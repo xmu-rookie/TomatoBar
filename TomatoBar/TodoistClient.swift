@@ -25,6 +25,13 @@ protocol TodoistSyncing {
     ) async throws -> TodoistSyncResponse
 }
 
+protocol TodoistCommandExecuting {
+    func execute(
+        token: String,
+        commands: [TodoistSyncCommandRequest]
+    ) async throws -> TodoistSyncCommandResponse
+}
+
 struct TodoistUser: Decodable, Equatable {
     let id: String
     let fullName: String
@@ -119,7 +126,10 @@ enum TodoistClientError: LocalizedError, Equatable {
     }
 }
 
-struct TodoistClient: TodoistConnecting, TodoistSyncing {
+struct TodoistClient:
+    TodoistConnecting,
+    TodoistSyncing,
+    TodoistCommandExecuting {
     private let baseURL: URL
     private let transport: HTTPTransport
     private let decoder: JSONDecoder
@@ -186,6 +196,54 @@ struct TodoistClient: TodoistConnecting, TodoistSyncing {
         let data = try await perform(request)
         do {
             return try decoder.decode(TodoistSyncResponse.self, from: data)
+        } catch {
+            throw TodoistClientError.invalidResponse
+        }
+    }
+
+    func execute(
+        token: String,
+        commands: [TodoistSyncCommandRequest]
+    ) async throws -> TodoistSyncCommandResponse {
+        let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedToken.isEmpty else {
+            throw TodoistClientError.emptyToken
+        }
+        guard !commands.isEmpty, commands.count <= 100 else {
+            throw TodoistClientError.badRequest
+        }
+
+        let encodedCommands: Data
+        do {
+            encodedCommands = try JSONEncoder().encode(commands)
+        } catch {
+            throw TodoistClientError.invalidResponse
+        }
+        guard let commandJSON = String(
+            data: encodedCommands,
+            encoding: .utf8
+        ) else {
+            throw TodoistClientError.invalidResponse
+        }
+
+        var form = URLComponents()
+        form.queryItems = [
+            URLQueryItem(name: "commands", value: commandJSON),
+        ]
+        var request = URLRequest(url: baseURL.appendingPathComponent("sync"))
+        request.httpMethod = "POST"
+        request.httpBody = form.percentEncodedQuery?.data(using: .utf8)
+        request.setValue("Bearer \(trimmedToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(
+            "application/x-www-form-urlencoded",
+            forHTTPHeaderField: "Content-Type"
+        )
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.timeoutInterval = 15
+
+        let data = try await perform(request)
+        do {
+            return try decoder.decode(TodoistSyncCommandResponse.self, from: data)
         } catch {
             throw TodoistClientError.invalidResponse
         }

@@ -26,6 +26,7 @@ final class FocusSession {
     var taskContent: String?
     var todoistProjectID: String?
     var projectName: String?
+    var todoistCommentID: String?
     var syncStateRawValue: String
 
     @Relationship(deleteRule: .cascade, inverse: \FocusSegment.session)
@@ -52,6 +53,7 @@ final class FocusSession {
         taskContent: String? = nil,
         todoistProjectID: String? = nil,
         projectName: String? = nil,
+        todoistCommentID: String? = nil,
         syncState: FocusSessionSyncState = .localOnly,
         segments: [FocusSegment] = []
     ) {
@@ -66,6 +68,7 @@ final class FocusSession {
         self.taskContent = taskContent
         self.todoistProjectID = todoistProjectID
         self.projectName = projectName
+        self.todoistCommentID = todoistCommentID
         syncStateRawValue = syncState.rawValue
         self.segments = segments
     }

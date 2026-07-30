@@ -145,6 +145,7 @@ struct TBPopoverView: View {
     @StateObject private var timer = TBTimer()
     @StateObject private var todoistConnection = TodoistConnectionViewModel()
     @StateObject private var todoistTasks = TodoistTaskListViewModel()
+    @StateObject private var todoistWrites = TodoistWriteViewModel()
     @State private var buttonHovered = false
     @State private var activeChildView = ChildView.intervals
 
@@ -188,6 +189,22 @@ struct TBPopoverView: View {
                                     "SessionNote.skip.label",
                                     comment: "Skip session note label"
                                 ))
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                        if let selectedTask = timer.selectedTodoistTask {
+                            Button {
+                                timer.savePendingNote()
+                                todoistWrites.complete(selectedTask)
+                                timer.selectedTodoistTask = nil
+                            } label: {
+                                Label(
+                                    NSLocalizedString(
+                                        "SessionNote.saveAndComplete.label",
+                                        comment: "Save note and complete Todoist task"
+                                    ),
+                                    systemImage: "checkmark.circle"
+                                )
                                 .frame(maxWidth: .infinity)
                             }
                         }
@@ -307,6 +324,7 @@ struct TBPopoverView: View {
                     TodoistWorkspaceView(
                         connectionViewModel: todoistConnection,
                         taskViewModel: todoistTasks,
+                        writeViewModel: todoistWrites,
                         selection: $timer.selectedTodoistTask,
                         isSelectionDisabled: timer.isActive
                     )
@@ -369,6 +387,7 @@ struct TBPopoverView: View {
             }
             .task {
                 await todoistConnection.testSavedConnection()
+                await todoistWrites.processor.process()
                 if !timer.isActive {
                     await todoistTasks.refresh()
                 }
@@ -376,6 +395,16 @@ struct TBPopoverView: View {
             }
             .onReceive(
                 NotificationCenter.default.publisher(for: .todoistPopoverWillOpen)
+            ) { _ in
+                guard !timer.isActive else {
+                    return
+                }
+                Task {
+                    await todoistTasks.refresh()
+                }
+            }
+            .onReceive(
+                NotificationCenter.default.publisher(for: .todoistWriteDidSucceed)
             ) { _ in
                 guard !timer.isActive else {
                     return

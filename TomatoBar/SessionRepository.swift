@@ -45,6 +45,8 @@ final class SwiftDataSessionRepository: SessionRepository {
             segments: segments
         )
         context.insert(session)
+        try TodoistOutboxComposer(context: context)
+            .enqueueNewSession(session)
         try context.save()
         return session.id
     }
@@ -54,6 +56,8 @@ final class SwiftDataSessionRepository: SessionRepository {
             return
         }
         session.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        try TodoistOutboxComposer(context: context)
+            .updateSessionNote(session)
         try context.save()
     }
 
@@ -61,6 +65,8 @@ final class SwiftDataSessionRepository: SessionRepository {
         guard let session = try find(sessionID: sessionID) else {
             return
         }
+        try TodoistOutboxComposer(context: context)
+            .prepareDelete(session)
         context.delete(session)
         try context.save()
     }
@@ -89,7 +95,9 @@ enum AppPersistence {
                 FocusSegment.self,
                 TodoistProjectCache.self,
                 TodoistTaskCache.self,
-                TodoistSyncMetadata.self
+                TodoistSyncMetadata.self,
+                PendingTodoistCommand.self,
+                TodoistTaskSummary.self
             )
         } catch {
             fatalError("Unable to create local session store: \(error)")
