@@ -32,6 +32,11 @@ If the app doesn't start, install using the `--no-quarantine` flag:
 brew install --cask --no-quarantine tomatobar
 ```
 
+## Development
+Development toward the Todoist-connected TomaTrace app is tracked in the Chinese-language [product and engineering roadmap](docs/TOMATRACE_PLAN.md).
+
+New to Xcode? See the Chinese-language [Xcode development, debugging, and distribution guide](docs/XCODE_GUIDE.md) for running the project, debugging errors, rebranding the app, installing it locally, and preparing a signed release.
+
 ## Integration with other tools
 ### Event log
 TomatoBar logs state transitions in JSON format to `~/Library/Containers/com.github.ivoronin.TomatoBar/Data/Library/Caches/TomatoBar.log`. Use this data to analyze your productivity and enrich other data sources.
