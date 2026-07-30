@@ -98,6 +98,31 @@ final class SessionRepositoryTests: XCTestCase {
         XCTAssertEqual(try repository.fetchAll().map(\.id), [later.id, earlier.id])
     }
 
+    func testSavesTodoistTaskAndProjectSnapshot() throws {
+        let base = makeDraft()
+        let draft = FocusSessionDraft(
+            id: base.id,
+            startedAt: base.startedAt,
+            endedAt: base.endedAt,
+            activeDuration: base.activeDuration,
+            tomatoCount: base.tomatoCount,
+            completedInterval: base.completedInterval,
+            todoistTaskID: "task-1",
+            taskContent: "Write report",
+            todoistProjectID: "project-1",
+            projectName: "Work",
+            segments: base.segments
+        )
+
+        try repository.save(draft)
+        let saved = try XCTUnwrap(repository.fetchAll().first)
+
+        XCTAssertEqual(saved.todoistTaskID, "task-1")
+        XCTAssertEqual(saved.taskContent, "Write report")
+        XCTAssertEqual(saved.todoistProjectID, "project-1")
+        XCTAssertEqual(saved.projectName, "Work")
+    }
+
     func testSessionSurvivesContainerReopen() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

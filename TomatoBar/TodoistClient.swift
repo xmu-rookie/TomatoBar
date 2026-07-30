@@ -18,6 +18,13 @@ protocol TodoistConnecting {
     func testConnection(token: String) async throws -> TodoistUser
 }
 
+protocol TodoistSyncing {
+    func syncResources(
+        token: String,
+        syncToken: String
+    ) async throws -> TodoistSyncResponse
+}
+
 struct TodoistUser: Decodable, Equatable {
     let id: String
     let fullName: String
@@ -49,6 +56,7 @@ struct TodoistUser: Decodable, Equatable {
 
 enum TodoistClientError: LocalizedError, Equatable {
     case emptyToken
+    case badRequest
     case unauthorized
     case forbidden
     case rateLimited(retryAfterSeconds: Int?)
@@ -62,6 +70,11 @@ enum TodoistClientError: LocalizedError, Equatable {
             return NSLocalizedString(
                 "TodoistClientError.emptyToken",
                 comment: "Empty Todoist token error"
+            )
+        case .badRequest:
+            return NSLocalizedString(
+                "TodoistClientError.badRequest",
+                comment: "Invalid Todoist request error"
             )
         case .unauthorized:
             return NSLocalizedString(
@@ -106,7 +119,7 @@ enum TodoistClientError: LocalizedError, Equatable {
     }
 }
 
-struct TodoistClient: TodoistConnecting {
+struct TodoistClient: TodoistConnecting, TodoistSyncing {
     private let baseURL: URL
     private let transport: HTTPTransport
     private let decoder: JSONDecoder
@@ -133,6 +146,52 @@ struct TodoistClient: TodoistConnecting {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 15
 
+        let data = try await perform(request)
+        do {
+            return try decoder.decode(TodoistUser.self, from: data)
+        } catch {
+            throw TodoistClientError.invalidResponse
+        }
+    }
+
+    func syncResources(
+        token: String,
+        syncToken: String
+    ) async throws -> TodoistSyncResponse {
+        let trimmedToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedToken.isEmpty else {
+            throw TodoistClientError.emptyToken
+        }
+
+        var form = URLComponents()
+        form.queryItems = [
+            URLQueryItem(name: "sync_token", value: syncToken),
+            URLQueryItem(
+                name: "resource_types",
+                value: #"["projects","items"]"#
+            ),
+        ]
+
+        var request = URLRequest(url: baseURL.appendingPathComponent("sync"))
+        request.httpMethod = "POST"
+        request.httpBody = form.percentEncodedQuery?.data(using: .utf8)
+        request.setValue("Bearer \(trimmedToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(
+            "application/x-www-form-urlencoded",
+            forHTTPHeaderField: "Content-Type"
+        )
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.timeoutInterval = 15
+
+        let data = try await perform(request)
+        do {
+            return try decoder.decode(TodoistSyncResponse.self, from: data)
+        } catch {
+            throw TodoistClientError.invalidResponse
+        }
+    }
+
+    private func perform(_ request: URLRequest) async throws -> Data {
         let data: Data
         let response: HTTPURLResponse
         do {
@@ -145,11 +204,9 @@ struct TodoistClient: TodoistConnecting {
 
         switch response.statusCode {
         case 200 ..< 300:
-            do {
-                return try decoder.decode(TodoistUser.self, from: data)
-            } catch {
-                throw TodoistClientError.invalidResponse
-            }
+            return data
+        case 400:
+            throw TodoistClientError.badRequest
         case 401:
             throw TodoistClientError.unauthorized
         case 403:

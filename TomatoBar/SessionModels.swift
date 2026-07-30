@@ -121,6 +121,10 @@ struct FocusSessionDraft {
     let tomatoCount: Double
     let completedInterval: Bool
     let note: String
+    let todoistTaskID: String?
+    let taskContent: String?
+    let todoistProjectID: String?
+    let projectName: String?
     let segments: [Segment]
 
     init(
@@ -131,6 +135,10 @@ struct FocusSessionDraft {
         tomatoCount: Double,
         completedInterval: Bool,
         note: String = "",
+        todoistTaskID: String? = nil,
+        taskContent: String? = nil,
+        todoistProjectID: String? = nil,
+        projectName: String? = nil,
         segments: [Segment]
     ) {
         self.id = id
@@ -140,6 +148,10 @@ struct FocusSessionDraft {
         self.tomatoCount = tomatoCount
         self.completedInterval = completedInterval
         self.note = note
+        self.todoistTaskID = todoistTaskID
+        self.taskContent = taskContent
+        self.todoistProjectID = todoistProjectID
+        self.projectName = projectName
         self.segments = segments
     }
 }

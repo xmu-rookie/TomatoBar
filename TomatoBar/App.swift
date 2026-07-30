@@ -1,6 +1,11 @@
 import SwiftUI
 import LaunchAtLogin
 
+extension Notification.Name {
+    static let todoistPopoverWillOpen =
+        Notification.Name("todoistPopoverWillOpen")
+}
+
 extension NSImage.Name {
     static let idle = Self("BarIconIdle")
     static let work = Self("BarIconWork")
@@ -79,6 +84,7 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
 
     func showPopover(_: AnyObject?) {
         if let button = statusBarItem?.button {
+            NotificationCenter.default.post(name: .todoistPopoverWillOpen, object: nil)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
             popover.contentViewController?.view.window?.makeKey()
         }

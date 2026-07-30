@@ -48,6 +48,7 @@
 "TodoistSettings.connected.status" = "已连接：%@";
 "TodoistConnection.unknownError" = "无法测试连接，请重试。";
 "TodoistClientError.emptyToken" = "请输入 Todoist API Token。";
+"TodoistClientError.badRequest" = "Todoist 拒绝了同步请求。";
 "TodoistClientError.unauthorized" = "Todoist Token 无效或已被撤销。";
 "TodoistClientError.forbidden" = "Todoist 拒绝了此 Token 的访问。";
 "TodoistClientError.rateLimitedWithDelay" = "Todoist 请求过多，请在 %d 秒后重试。";
@@ -58,3 +59,16 @@
 "CredentialStoreError.emptyToken" = "Todoist Token 不能为空。";
 "CredentialStoreError.invalidStoredValue" = "钥匙串中的 Token 无法读取。";
 "CredentialStoreError.keychain" = "macOS 钥匙串返回错误 %d。";
+"TodoistTasks.title" = "专注任务";
+"TodoistTasks.refresh.help" = "刷新 Todoist 项目和任务";
+"TodoistTasks.search.placeholder" = "搜索所有未完成任务";
+"TodoistTasks.project.label" = "项目";
+"TodoistTasks.allProjects.label" = "全部项目";
+"TodoistTasks.noTask.label" = "无任务";
+"TodoistTasks.todayEmpty.message" = "今天和逾期任务已清空。";
+"TodoistTasks.searchEmpty.message" = "没有匹配的未完成任务。";
+"TodoistTasks.syncing.status" = "正在同步 Todoist…";
+"TodoistTasks.synced.status" = "上次同步：%@";
+"TodoistTasks.notConnected.status" = "连接 Todoist 后可刷新；已有缓存仍可使用。";
+"TodoistTasks.cacheError" = "无法读取本地 Todoist 缓存。";
+"TodoistTasks.syncError" = "无法同步 Todoist，已有缓存仍可使用。";

@@ -58,6 +58,17 @@ private struct SessionHistoryRow: View {
                 Text(summary)
                     .foregroundStyle(.secondary)
             }
+            if let taskContent = session.taskContent {
+                HStack(spacing: 4) {
+                    Image(systemName: "checklist")
+                    Text(taskContent)
+                        .lineLimit(1)
+                    if let projectName = session.projectName {
+                        Text("· \(projectName)")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
             if !session.note.isEmpty {
                 Text(session.note)
                     .lineLimit(2)

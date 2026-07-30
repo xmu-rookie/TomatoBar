@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-`TomatoBar/` contains the macOS application source. `App.swift` creates the menu-bar item and popover, `View.swift` defines the SwiftUI interface, `TimerEngine.swift` contains pure timer rules, and `Timer.swift` connects those rules to macOS side effects. SwiftData session models, persistence, and history UI live in `SessionModels.swift`, `SessionRepository.swift`, and `SessionHistoryView.swift`. Todoist credentials, HTTP access, connection state, and UI are separated into `CredentialStore.swift`, `TodoistClient.swift`, `TodoistConnectionViewModel.swift`, and `TodoistSettingsView.swift`. Supporting concerns are separated into `Player.swift`, `Notifications.swift`, and `Log.swift`.
+`TomatoBar/` contains the macOS application source. `App.swift` creates the menu-bar item and popover, `View.swift` defines the SwiftUI interface, `TimerEngine.swift` contains pure timer rules, and `Timer.swift` connects those rules to macOS side effects. SwiftData session models, persistence, and history UI live in `SessionModels.swift`, `SessionRepository.swift`, and `SessionHistoryView.swift`. Todoist credentials and HTTP access are in `CredentialStore.swift` and `TodoistClient.swift`; connection and task-sync features use the remaining `Todoist*.swift` files. Supporting concerns are separated into `Player.swift`, `Notifications.swift`, and `Log.swift`.
 
 Application images and sounds live in `TomatoBar/Assets.xcassets`. Localized strings are grouped by locale in `TomatoBar/{en,ko,zh-Hans}.lproj`. `Icons/` contains source artwork and conversion tooling. Xcode project settings and pinned Swift Package dependencies are under `TomatoBar.xcodeproj/`.
 
@@ -21,7 +21,7 @@ Never place Todoist credentials in source code, fixtures, logs, screenshots, bui
 - `open TomatoBar.xcodeproj` opens the project in Xcode. Select the `TomatoBar` scheme and `My Mac`, then press `Cmd-R`.
 - `xcodebuild -project TomatoBar.xcodeproj -scheme TomatoBar -configuration Debug CODE_SIGNING_ALLOWED=NO build` performs a local command-line build without requiring a signing identity.
 - `xcodebuild -project TomatoBar.xcodeproj -scheme TomatoBar -configuration Release CODE_SIGNING_ALLOWED=NO build` checks the optimized configuration used by CI.
-- `xcodebuild test -project TomatoBar.xcodeproj -scheme TomatoBar -destination 'platform=macOS'` should be used once a test target is added.
+- `xcodebuild test -project TomatoBar.xcodeproj -scheme TomatoBar -destination 'platform=macOS'` runs the unit and persistence test suite.
 
 Swift Package Manager resolves `LaunchAtLogin` and `KeyboardShortcuts`; keep `Package.resolved` committed when dependency versions change.
 

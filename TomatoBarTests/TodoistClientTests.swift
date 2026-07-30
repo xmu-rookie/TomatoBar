@@ -86,6 +86,107 @@ final class TodoistClientTests: XCTestCase {
         }
     }
 
+    func testSyncBuildsFormRequestAndDecodesResources() async throws {
+        let transport = HTTPTransportStub(
+            statusCode: 200,
+            data: Data(
+                #"""
+                {
+                  "sync_token": "next-token",
+                  "full_sync": true,
+                  "projects": [{
+                    "id": "project-1",
+                    "name": "Work",
+                    "color": "blue",
+                    "child_order": 2,
+                    "is_deleted": false,
+                    "is_archived": false
+                  }],
+                  "items": [{
+                    "id": "task-1",
+                    "project_id": "project-1",
+                    "content": "Write report",
+                    "description": "Quarterly report",
+                    "priority": 4,
+                    "due": {
+                      "date": "2026-07-30T12:00:00",
+                      "string": "today at noon",
+                      "is_recurring": false
+                    },
+                    "checked": false,
+                    "is_deleted": false
+                  }]
+                }
+                """#.utf8
+            )
+        )
+        let client = TodoistClient(
+            baseURL: URL(string: "https://example.com/api/v1")!,
+            transport: transport
+        )
+
+        let response = try await client.syncResources(
+            token: " test-token ",
+            syncToken: "previous-token"
+        )
+
+        XCTAssertTrue(response.fullSync)
+        XCTAssertEqual(response.syncToken, "next-token")
+        XCTAssertEqual(response.projects.first?.name, "Work")
+        XCTAssertEqual(response.tasks.first?.content, "Write report")
+        XCTAssertEqual(response.tasks.first?.due?.date, "2026-07-30T12:00:00")
+
+        let request = try XCTUnwrap(transport.lastRequest)
+        XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/v1/sync")
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(
+            request.value(forHTTPHeaderField: "Authorization"),
+            "Bearer test-token"
+        )
+        XCTAssertEqual(
+            request.value(forHTTPHeaderField: "Content-Type"),
+            "application/x-www-form-urlencoded"
+        )
+        let form = try XCTUnwrap(
+            URLComponents(
+                string: "?\(String(decoding: request.httpBody ?? Data(), as: UTF8.self))"
+            )
+        )
+        let values = Dictionary(
+            uniqueKeysWithValues: (form.queryItems ?? []).compactMap { item in
+                item.value.map { (item.name, $0) }
+            }
+        )
+        XCTAssertEqual(values["sync_token"], "previous-token")
+        XCTAssertEqual(values["resource_types"], #"["projects","items"]"#)
+    }
+
+    func testIncrementalSyncAllowsMissingResourceArrays() async throws {
+        let transport = HTTPTransportStub(
+            statusCode: 200,
+            data: Data(#"{"sync_token":"next","full_sync":false}"#.utf8)
+        )
+
+        let response = try await TodoistClient(transport: transport)
+            .syncResources(token: "token", syncToken: "previous")
+
+        XCTAssertFalse(response.fullSync)
+        XCTAssertEqual(response.projects, [])
+        XCTAssertEqual(response.tasks, [])
+    }
+
+    func testBadRequestIsClassifiedForSyncTokenRecovery() async {
+        let transport = HTTPTransportStub(statusCode: 400)
+        let client = TodoistClient(transport: transport)
+
+        await assertError(.badRequest) {
+            _ = try await client.syncResources(
+                token: "token",
+                syncToken: "expired"
+            )
+        }
+    }
+
     private func assertError(
         _ expected: TodoistClientError,
         operation: () async throws -> Void

@@ -21,6 +21,7 @@ final class TBTimer: ObservableObject {
     @Published private(set) var timer: DispatchSourceTimer?
     @Published private(set) var pendingNoteSessionID: UUID?
     @Published var pendingNoteText = ""
+    @Published var selectedTodoistTask: TodoistTaskSelection?
     @Published private(set) var persistenceErrorMessage: String?
 
     private var engine = TimerEngine()
@@ -201,7 +202,8 @@ final class TBTimer: ObservableObject {
         let sessionDraft = sessionTracker.consume(
             transition: transition,
             at: date,
-            recordWork: recordWork
+            recordWork: recordWork,
+            taskSelection: selectedTodoistTask
         )
         stopTicker()
         if transition.from.phase == .work, transition.from.status == .running {

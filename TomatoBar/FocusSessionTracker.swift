@@ -15,12 +15,14 @@ struct FocusSessionTracker {
     private var activeSegmentStartedAt: Date?
     private var pauseSegmentStartedAt: Date?
     private var segments: [TrackedSegment] = []
+    private var taskSelection: TodoistTaskSelection?
 
     @discardableResult
     mutating func consume(
         transition: TimerEngine.Transition,
         at date: Date,
-        recordWork: Bool = true
+        recordWork: Bool = true,
+        taskSelection: TodoistTaskSelection? = nil
     ) -> FocusSessionDraft? {
         var draft: FocusSessionDraft?
 
@@ -34,7 +36,7 @@ struct FocusSessionTracker {
 
             case .resumed:
                 if sessionStartedAt == nil {
-                    beginWork(at: date)
+                    beginWork(at: date, taskSelection: taskSelection)
                 } else {
                     closePauseSegment(at: date)
                     activeSegmentStartedAt = date
@@ -60,18 +62,22 @@ struct FocusSessionTracker {
            transition.to.phase == .work {
             reset()
             if transition.to.status == .running {
-                beginWork(at: date)
+                beginWork(at: date, taskSelection: taskSelection)
             }
         }
 
         return draft
     }
 
-    private mutating func beginWork(at date: Date) {
+    private mutating func beginWork(
+        at date: Date,
+        taskSelection: TodoistTaskSelection?
+    ) {
         sessionStartedAt = date
         activeSegmentStartedAt = date
         pauseSegmentStartedAt = nil
         segments = []
+        self.taskSelection = taskSelection
     }
 
     private mutating func closeActiveSegment(at date: Date) {
@@ -149,6 +155,10 @@ struct FocusSessionTracker {
             activeDuration: result.activeDuration,
             tomatoCount: result.tomatoCount,
             completedInterval: result.completedInterval,
+            todoistTaskID: taskSelection?.taskID,
+            taskContent: taskSelection?.content,
+            todoistProjectID: taskSelection?.projectID,
+            projectName: taskSelection?.projectName,
             segments: normalizedSegments
         )
     }
@@ -158,5 +168,6 @@ struct FocusSessionTracker {
         activeSegmentStartedAt = nil
         pauseSegmentStartedAt = nil
         segments = []
+        taskSelection = nil
     }
 }

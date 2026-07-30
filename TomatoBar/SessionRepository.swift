@@ -38,6 +38,10 @@ final class SwiftDataSessionRepository: SessionRepository {
             tomatoCount: draft.tomatoCount,
             completedInterval: draft.completedInterval,
             note: draft.note,
+            todoistTaskID: draft.todoistTaskID,
+            taskContent: draft.taskContent,
+            todoistProjectID: draft.todoistProjectID,
+            projectName: draft.projectName,
             segments: segments
         )
         context.insert(session)
@@ -82,7 +86,10 @@ enum AppPersistence {
         do {
             return try ModelContainer(
                 for: FocusSession.self,
-                FocusSegment.self
+                FocusSegment.self,
+                TodoistProjectCache.self,
+                TodoistTaskCache.self,
+                TodoistSyncMetadata.self
             )
         } catch {
             fatalError("Unable to create local session store: \(error)")

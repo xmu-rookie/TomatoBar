@@ -144,6 +144,7 @@ private enum ChildView {
 struct TBPopoverView: View {
     @StateObject private var timer = TBTimer()
     @StateObject private var todoistConnection = TodoistConnectionViewModel()
+    @StateObject private var todoistTasks = TodoistTaskListViewModel()
     @State private var buttonHovered = false
     @State private var activeChildView = ChildView.intervals
 
@@ -208,6 +209,27 @@ struct TBPopoverView: View {
                     .buttonStyle(.plain)
                 }
             }
+
+            Button {
+                activeChildView = .todoist
+            } label: {
+                HStack {
+                    Image(systemName: "checklist")
+                    Text(
+                        timer.selectedTodoistTask?.content
+                            ?? NSLocalizedString(
+                                "TodoistTasks.noTask.label",
+                                comment: "No Todoist task label"
+                            )
+                    )
+                    .lineLimit(1)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(timer.isActive)
 
             Button {
                 timer.startStop()
@@ -282,7 +304,12 @@ struct TBPopoverView: View {
                 case .sounds:
                     SoundsView().environmentObject(timer.player)
                 case .todoist:
-                    TodoistSettingsView(viewModel: todoistConnection)
+                    TodoistWorkspaceView(
+                        connectionViewModel: todoistConnection,
+                        taskViewModel: todoistTasks,
+                        selection: $timer.selectedTodoistTask,
+                        isSelectionDisabled: timer.isActive
+                    )
                 }
             }
 
@@ -342,7 +369,20 @@ struct TBPopoverView: View {
             }
             .task {
                 await todoistConnection.testSavedConnection()
+                if !timer.isActive {
+                    await todoistTasks.refresh()
+                }
                 TBStatusItem.shared.resizePopoverToFit()
+            }
+            .onReceive(
+                NotificationCenter.default.publisher(for: .todoistPopoverWillOpen)
+            ) { _ in
+                guard !timer.isActive else {
+                    return
+                }
+                Task {
+                    await todoistTasks.refresh()
+                }
             }
     }
 }

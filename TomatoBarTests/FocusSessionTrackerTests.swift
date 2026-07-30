@@ -128,4 +128,46 @@ final class FocusSessionTrackerTests: XCTestCase {
 
         XCTAssertNil(draft)
     }
+
+    func testTaskSnapshotIsCapturedWhenWorkStarts() throws {
+        var engine = TimerEngine()
+        var tracker = FocusSessionTracker()
+        let initialSelection = TodoistTaskSelection(
+            taskID: "task-1",
+            content: "Original task name",
+            projectID: "project-1",
+            projectName: "Original project"
+        )
+        let started = try XCTUnwrap(
+            engine.start(
+                configuration: .init(workDuration: 60),
+                at: startDate
+            )
+        )
+        tracker.consume(
+            transition: started,
+            at: startDate,
+            taskSelection: initialSelection
+        )
+
+        let stoppedAt = startDate.addingTimeInterval(30)
+        let stopped = try XCTUnwrap(engine.stop(at: stoppedAt))
+        let draft = try XCTUnwrap(
+            tracker.consume(
+                transition: stopped,
+                at: stoppedAt,
+                taskSelection: TodoistTaskSelection(
+                    taskID: "task-2",
+                    content: "Changed selection",
+                    projectID: "project-2",
+                    projectName: "Changed project"
+                )
+            )
+        )
+
+        XCTAssertEqual(draft.todoistTaskID, "task-1")
+        XCTAssertEqual(draft.taskContent, "Original task name")
+        XCTAssertEqual(draft.todoistProjectID, "project-1")
+        XCTAssertEqual(draft.projectName, "Original project")
+    }
 }
