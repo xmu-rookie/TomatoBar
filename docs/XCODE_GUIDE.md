@@ -28,7 +28,7 @@
 3. 左侧打开 `Test Navigator`（菱形图标）。所有测试右侧显示绿色对勾即为通过。
 4. 单个测试失败时，点击红色叉号查看完整错误；修复后点击测试名称旁的运行按钮重试。
 
-当前基线包含 20 个测试，覆盖计时状态、暂停区段、番茄量化、SwiftData 保存、备注、删除，以及关闭并重新打开本地数据库后的恢复。
+当前基线包含 32 个测试，覆盖计时状态、暂停区段、番茄量化、SwiftData 持久化、Todoist 网络错误、连接状态，以及真实 Keychain 的保存、更新和删除。
 
 常用调试方法：
 
@@ -107,4 +107,19 @@ Apple 官方参考：
 
 ## Todoist 与敏感信息
 
-Todoist Token 只能输入应用界面并保存到 macOS Keychain。不要把 Token 写入 Swift 源码、`.plist`、日志、截图或 Git 提交。接入网络时还需要在 App Sandbox 中启用 `Outgoing Connections (Client)`。
+安全获取个人 Token：
+
+1. 在浏览器登录 Todoist，打开 `Settings > Integrations > Developer`。
+2. 在 `API token` 下复制 Token。它相当于账号密码，不要发到聊天、截图或提交到 Git。
+3. 如果怀疑泄露，在同一页面生成新 Token；旧 Token 会失效。
+
+在应用中连接：
+
+1. 按 `Cmd-R` 运行，在菜单栏打开番茄图标。
+2. 选择 `Todoist`，把 Token 粘贴到安全输入框，点击“连接”。
+3. 显示“已连接”后，Token 已保存到 macOS Keychain，界面不会再次回显。
+4. 点击“重新测试”可检查网络和凭据；点击“断开连接”会删除 Keychain 中的 Token。
+
+不要把 Token 写入 Swift 源码、`.plist`、日志或 Build Settings。仓库根目录的 `.env` 只用于本地开发验收，已被 Git 忽略，也不会被打进 App。项目已在 App Sandbox 中启用 `Outgoing Connections (Client)`。
+
+Todoist 官方参考：[Authentication](https://developer.todoist.com/api/v1/#authentication)。

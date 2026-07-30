@@ -138,11 +138,12 @@ private struct SoundsView: View {
 }
 
 private enum ChildView {
-    case intervals, settings, sounds
+    case intervals, settings, sounds, todoist
 }
 
 struct TBPopoverView: View {
     @StateObject private var timer = TBTimer()
+    @StateObject private var todoistConnection = TodoistConnectionViewModel()
     @State private var buttonHovered = false
     @State private var activeChildView = ChildView.intervals
 
@@ -265,6 +266,8 @@ struct TBPopoverView: View {
                                        comment: "Settings label")).tag(ChildView.settings)
                 Text(NSLocalizedString("TBPopoverView.sounds.label",
                                        comment: "Sounds label")).tag(ChildView.sounds)
+                Text(NSLocalizedString("TBPopoverView.todoist.label",
+                                       comment: "Todoist label")).tag(ChildView.todoist)
             }
             .labelsHidden()
             .frame(maxWidth: .infinity)
@@ -278,6 +281,8 @@ struct TBPopoverView: View {
                     SettingsView().environmentObject(timer)
                 case .sounds:
                     SoundsView().environmentObject(timer.player)
+                case .todoist:
+                    TodoistSettingsView(viewModel: todoistConnection)
                 }
             }
 
@@ -333,6 +338,10 @@ struct TBPopoverView: View {
 //            .frame(width: 240, height: 276)
             .padding(12)
             .onChange(of: activeChildView) {
+                TBStatusItem.shared.resizePopoverToFit()
+            }
+            .task {
+                await todoistConnection.testSavedConnection()
                 TBStatusItem.shared.resizePopoverToFit()
             }
     }

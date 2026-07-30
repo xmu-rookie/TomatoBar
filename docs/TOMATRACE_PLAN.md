@@ -1,6 +1,6 @@
 # TomaTrace 产品与工程路线图
 
-> 状态：M3「本地 session」已完成，下一阶段为 M4「Todoist 连接」
+> 状态：M4「Todoist 连接」已完成，下一阶段为 M5「任务同步与选择」
 >
 > 更新规则：需求、架构或阶段状态发生变化时，必须在对应代码提交中同步更新本文。
 
@@ -110,13 +110,29 @@ TomaTrace 将在 TomatoBar 的菜单栏番茄钟基础上，提供与 Pomist 同
 - session 在结束时先原子保存，备注为空也不会丢失记录；
 - Debug、Release、三种本地化及 Debug 应用启动检查通过。
 
-### M4：Todoist 连接（当前）
+### M4：Todoist 连接（已完成）
 
-- 增加设置界面、Keychain Token 存储、连接测试和清除凭据。
-- 增加网络错误分类和脱敏日志，并开启 App Sandbox 出站网络能力。
+- [x] 增加设置界面、Keychain Token 存储、连接测试和清除凭据。
+- [x] 增加网络错误分类和脱敏错误，并开启 App Sandbox 出站网络能力。
 - 验收：有效 Token 显示账号连接成功；无效或断网时给出可理解提示；Git 和日志中无 Token。
 
-### M5：任务同步与选择
+2026-07-30 自动验证记录：
+
+- Todoist API 使用当前 `https://api.todoist.com/api/v1/user` 接口；仓库
+  `.env` 中的真实 Token 得到 HTTP 200 和合法用户结构，验证过程未输出
+  Token、姓名或邮箱；
+- `TodoistClientTests` 6 项通过，覆盖认证请求、两种用户 ID、401、429、
+  非法响应和断网分类；错误消息不包含请求或响应正文；
+- `TodoistConnectionViewModelTests` 4 项通过，覆盖成功后才保存 Token、
+  失败不保存、已存 Token 不回显和断开连接；
+- `CredentialStoreTests` 2 项通过，真实完成 Keychain 新增、读取、更新和
+  删除；完整测试集共 32 项通过；
+- Debug 临时签名包确认包含 App Sandbox 与
+  `com.apple.security.network.client`，应用实际启动检查通过；
+- Debug 测试、Release 构建及三种本地化文件检查通过，`.env` 仍被 Git
+  忽略。
+
+### M5：任务同步与选择（当前）
 
 - 实现项目、任务和增量游标缓存；增加默认列表、搜索、项目筛选和手动刷新。
 - 计时开始时保存任务及项目快照，防止远端改名破坏历史。
