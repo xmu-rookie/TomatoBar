@@ -208,6 +208,61 @@ final class SessionRepositoryTests: XCTestCase {
         )
     }
 
+    func testReassignsSessionAndRebuildsBothTaskSummaries() throws {
+        let draft = makeTodoistDraft()
+        try repository.save(draft)
+        let newSelection = TodoistTaskSelection(
+            taskID: "task-2",
+            content: "Review report",
+            projectID: "project-2",
+            projectName: "Planning"
+        )
+
+        try repository.update(
+            sessionID: draft.id,
+            note: "Reviewed",
+            taskSelection: newSelection
+        )
+
+        let session = try XCTUnwrap(repository.fetchAll().first)
+        XCTAssertEqual(session.todoistTaskID, "task-2")
+        XCTAssertEqual(session.taskContent, "Review report")
+        XCTAssertEqual(session.note, "Reviewed")
+        let context = ModelContext(container)
+        let commands = try context.fetch(
+            FetchDescriptor<PendingTodoistCommand>()
+        )
+        XCTAssertEqual(commands.count, 2)
+        XCTAssertTrue(commands.allSatisfy { $0.taskID == "task-2" })
+        XCTAssertEqual(
+            try context.fetch(FetchDescriptor<TodoistTaskSummary>())
+                .map(\.taskID),
+            ["task-2"]
+        )
+    }
+
+    func testCanChangeTodoistSessionToNoTask() throws {
+        let draft = makeTodoistDraft()
+        try repository.save(draft)
+
+        try repository.update(
+            sessionID: draft.id,
+            note: "",
+            taskSelection: nil
+        )
+
+        let session = try XCTUnwrap(repository.fetchAll().first)
+        XCTAssertNil(session.todoistTaskID)
+        XCTAssertEqual(session.syncState, .localOnly)
+        let context = ModelContext(container)
+        XCTAssertTrue(
+            try context.fetch(FetchDescriptor<PendingTodoistCommand>()).isEmpty
+        )
+        XCTAssertTrue(
+            try context.fetch(FetchDescriptor<TodoistTaskSummary>()).isEmpty
+        )
+    }
+
     func testSessionSurvivesContainerReopen() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)

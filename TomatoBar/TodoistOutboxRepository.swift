@@ -404,6 +404,87 @@ struct TodoistOutboxComposer {
         )
     }
 
+    func reassignSession(
+        _ session: FocusSession,
+        to selection: TodoistTaskSelection?,
+        at date: Date = Date()
+    ) throws {
+        let oldTaskID = session.todoistTaskID
+        let oldTaskContent = session.taskContent ?? ""
+
+        if oldTaskID == selection?.taskID {
+            session.taskContent = selection?.content
+            session.todoistProjectID = selection?.projectID
+            session.projectName = selection?.projectName
+            try updateSessionNote(session, at: date)
+            if let oldTaskID {
+                try updateSummary(
+                    taskID: oldTaskID,
+                    taskContent: selection?.content ?? oldTaskContent,
+                    sessions: try sessions(for: oldTaskID),
+                    at: date
+                )
+            }
+            return
+        }
+
+        for command in try allCommands() where command.sessionID == session.id {
+            context.delete(command)
+        }
+        if let oldTaskID, let commentID = session.todoistCommentID {
+            context.insert(
+                PendingTodoistCommand(
+                    kind: .sessionCommentDelete,
+                    taskID: oldTaskID,
+                    remoteObjectID: commentID,
+                    createdAt: date
+                )
+            )
+        }
+        if let oldTaskID {
+            try updateSummary(
+                taskID: oldTaskID,
+                taskContent: oldTaskContent,
+                sessions: try sessions(for: oldTaskID).filter {
+                    $0.id != session.id
+                },
+                at: date
+            )
+        }
+
+        session.todoistTaskID = selection?.taskID
+        session.taskContent = selection?.content
+        session.todoistProjectID = selection?.projectID
+        session.projectName = selection?.projectName
+        session.todoistCommentID = nil
+
+        guard let selection else {
+            session.syncState = .localOnly
+            return
+        }
+
+        session.syncState = .pending
+        context.insert(
+            PendingTodoistCommand(
+                kind: .sessionCommentAdd,
+                taskID: selection.taskID,
+                sessionID: session.id,
+                content: TodoistCommentFormatter.session(
+                    tomatoCount: session.tomatoCount,
+                    note: session.note
+                ),
+                temporaryID: UUID().uuidString.lowercased(),
+                createdAt: date
+            )
+        )
+        try updateSummary(
+            taskID: selection.taskID,
+            taskContent: selection.content,
+            sessions: try sessions(for: selection.taskID),
+            at: date
+        )
+    }
+
     private func updateSummary(
         taskID: String,
         taskContent: String,

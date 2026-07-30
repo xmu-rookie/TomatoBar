@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		M80000000000000000000001 /* EnhancedTimerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = M80000000000000000000002 /* EnhancedTimerViews.swift */; };
+		M80000000000000000000003 /* EnhancedPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = M80000000000000000000004 /* EnhancedPresentationTests.swift */; };
+		M90000000000000000000001 /* BrandingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = M90000000000000000000002 /* BrandingTests.swift */; };
+		M70000000000000000000001 /* StatisticsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = M70000000000000000000002 /* StatisticsEngine.swift */; };
+		M70000000000000000000003 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = M70000000000000000000004 /* StatisticsView.swift */; };
+		M70000000000000000000005 /* StatisticsEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = M70000000000000000000006 /* StatisticsEngineTests.swift */; };
 		M60000000000000000000001 /* TodoistCommandModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = M60000000000000000000002 /* TodoistCommandModels.swift */; };
 		M60000000000000000000003 /* TodoistOutboxRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = M60000000000000000000004 /* TodoistOutboxRepository.swift */; };
 		M60000000000000000000005 /* TodoistOutboxProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = M60000000000000000000006 /* TodoistOutboxProcessor.swift */; };
@@ -57,6 +63,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		M80000000000000000000002 /* EnhancedTimerViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedTimerViews.swift; sourceTree = "<group>"; };
+		M80000000000000000000004 /* EnhancedPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedPresentationTests.swift; sourceTree = "<group>"; };
+		M90000000000000000000002 /* BrandingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandingTests.swift; sourceTree = "<group>"; };
+		M70000000000000000000002 /* StatisticsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsEngine.swift; sourceTree = "<group>"; };
+		M70000000000000000000004 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		M70000000000000000000006 /* StatisticsEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsEngineTests.swift; sourceTree = "<group>"; };
 		M60000000000000000000002 /* TodoistCommandModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoistCommandModels.swift; sourceTree = "<group>"; };
 		M60000000000000000000004 /* TodoistOutboxRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoistOutboxRepository.swift; sourceTree = "<group>"; };
 		M60000000000000000000006 /* TodoistOutboxProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoistOutboxProcessor.swift; sourceTree = "<group>"; };
@@ -85,7 +97,7 @@
 		C20000000000000000000002 /* TimerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerEngine.swift; sourceTree = "<group>"; };
 		C20000000000000000000004 /* TimerEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerEngineTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000003 /* TomatoBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TomatoBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8A21B78827EE31A20009E5DB /* TomatoBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TomatoBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A21B78827EE31A20009E5DB /* TomaTrace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TomaTrace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A21B78B27EE31A20009E5DB /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		8A21B78D27EE31A20009E5DB /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		8A21B78F27EE31A30009E5DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -132,7 +144,7 @@
 		8A21B78927EE31A20009E5DB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8A21B78827EE31A20009E5DB /* TomatoBar.app */,
+				8A21B78827EE31A20009E5DB /* TomaTrace.app */,
 				B10000000000000000000003 /* TomatoBarTests.xctest */,
 			);
 			name = Products;
@@ -162,6 +174,9 @@
 				M60000000000000000000002 /* TodoistCommandModels.swift */,
 				M60000000000000000000004 /* TodoistOutboxRepository.swift */,
 				M60000000000000000000006 /* TodoistOutboxProcessor.swift */,
+				M70000000000000000000002 /* StatisticsEngine.swift */,
+				M70000000000000000000004 /* StatisticsView.swift */,
+				M80000000000000000000002 /* EnhancedTimerViews.swift */,
 				8A9F701E27EE536D0012A1EC /* Player.swift */,
 				8AA5B3F12812A74600BE1A6C /* Notifications.swift */,
 				8A21B78F27EE31A30009E5DB /* Assets.xcassets */,
@@ -191,6 +206,9 @@
 				M5000000000000000000000E /* TodoistTaskListViewModelTests.swift */,
 				M60000000000000000000008 /* TodoistOutboxRepositoryTests.swift */,
 				M6000000000000000000000A /* TodoistOutboxProcessorTests.swift */,
+				M70000000000000000000006 /* StatisticsEngineTests.swift */,
+				M80000000000000000000004 /* EnhancedPresentationTests.swift */,
+				M90000000000000000000002 /* BrandingTests.swift */,
 			);
 			path = TomatoBarTests;
 			sourceTree = "<group>";
@@ -236,7 +254,7 @@
 				8AA5B3EA281295DB00BE1A6C /* KeyboardShortcuts */,
 			);
 			productName = TomatoBar;
-			productReference = 8A21B78827EE31A20009E5DB /* TomatoBar.app */;
+			productReference = 8A21B78827EE31A20009E5DB /* TomaTrace.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -332,6 +350,9 @@
 				M5000000000000000000000D /* TodoistTaskListViewModelTests.swift in Sources */,
 				M60000000000000000000007 /* TodoistOutboxRepositoryTests.swift in Sources */,
 				M60000000000000000000009 /* TodoistOutboxProcessorTests.swift in Sources */,
+				M70000000000000000000005 /* StatisticsEngineTests.swift in Sources */,
+				M80000000000000000000003 /* EnhancedPresentationTests.swift in Sources */,
+				M90000000000000000000001 /* BrandingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +377,9 @@
 				M60000000000000000000001 /* TodoistCommandModels.swift in Sources */,
 				M60000000000000000000003 /* TodoistOutboxRepository.swift in Sources */,
 				M60000000000000000000005 /* TodoistOutboxProcessor.swift in Sources */,
+				M70000000000000000000001 /* StatisticsEngine.swift in Sources */,
+				M70000000000000000000003 /* StatisticsView.swift in Sources */,
+				M80000000000000000000001 /* EnhancedTimerViews.swift in Sources */,
 				8A9F701F27EE536D0012A1EC /* Player.swift in Sources */,
 				8AEE49AF2AA75A5E00243D2F /* Log.swift in Sources */,
 				8A21B78E27EE31A20009E5DB /* View.swift in Sources */,
@@ -400,11 +424,11 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.linyangfeng.tomatrace.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TomatoBar.app/Contents/MacOS/TomatoBar";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TomaTrace.app/Contents/MacOS/TomaTrace";
 				TEST_TARGET_NAME = TomatoBar;
 			};
 			name = Debug;
@@ -420,11 +444,11 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.linyangfeng.tomatrace.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TomatoBar.app/Contents/MacOS/TomatoBar";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TomaTrace.app/Contents/MacOS/TomaTrace";
 				TEST_TARGET_NAME = TomatoBar;
 			};
 			name = Release;
@@ -563,15 +587,16 @@
 				INFOPLIST_FILE = TomatoBar/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Ilya Voronin. All rights reserved. https://github.com/ivoronin/TomatoBar";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "TomaTrace © 2026 Yangfeng Lin. Based on TomatoBar © 2022 Ilya Voronin. MIT License.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBar;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.linyangfeng.tomatrace;
+				PRODUCT_MODULE_NAME = TomatoBar;
+				PRODUCT_NAME = TomaTrace;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
@@ -598,15 +623,16 @@
 				INFOPLIST_FILE = TomatoBar/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Ilya Voronin. All rights reserved. https://github.com/ivoronin/TomatoBar";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "TomaTrace © 2026 Yangfeng Lin. Based on TomatoBar © 2022 Ilya Voronin. MIT License.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.ivoronin.TomatoBar;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.linyangfeng.tomatrace;
+				PRODUCT_MODULE_NAME = TomatoBar;
+				PRODUCT_NAME = TomaTrace;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = (

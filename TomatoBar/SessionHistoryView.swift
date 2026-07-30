@@ -5,6 +5,11 @@ struct SessionHistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \FocusSession.startedAt, order: .reverse)
     private var sessions: [FocusSession]
+    @Query(sort: \TodoistTaskCache.content)
+    private var cachedTasks: [TodoistTaskCache]
+    @Query(sort: \TodoistProjectCache.name)
+    private var cachedProjects: [TodoistProjectCache]
+    @State private var editingSession: FocusSession?
 
     var body: some View {
         Group {
@@ -19,7 +24,9 @@ struct SessionHistoryView: View {
             } else {
                 List {
                     ForEach(sessions) { session in
-                        SessionHistoryRow(session: session)
+                        SessionHistoryRow(session: session) {
+                            editingSession = session
+                        }
                     }
                     .onDelete(perform: deleteSessions)
                 }
@@ -32,6 +39,13 @@ struct SessionHistoryView: View {
                 comment: "Session history window title"
             )
         )
+        .sheet(item: $editingSession) { session in
+            SessionEditorView(
+                session: session,
+                tasks: cachedTasks.map(\.snapshot),
+                projects: cachedProjects.map(\.snapshot)
+            )
+        }
     }
 
     private func deleteSessions(at offsets: IndexSet) {
@@ -48,6 +62,7 @@ struct SessionHistoryView: View {
 
 private struct SessionHistoryRow: View {
     let session: FocusSession
+    let onEdit: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -66,6 +81,14 @@ private struct SessionHistoryRow: View {
                         .foregroundStyle(syncColor)
                         .help(syncHelp)
                 }
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                }
+                .buttonStyle(.plain)
+                .help(NSLocalizedString(
+                    "SessionHistory.edit.help",
+                    comment: "Edit focus session help"
+                ))
             }
             if let taskContent = session.taskContent {
                 HStack(spacing: 4) {
@@ -127,6 +150,142 @@ private struct SessionHistoryRow: View {
     }
 }
 
+private struct SessionEditorView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
+    let session: FocusSession
+    let tasks: [TodoistTaskSnapshot]
+    let projects: [TodoistProjectSnapshot]
+
+    @State private var note: String
+    @State private var selectedTaskID: String?
+    @State private var errorMessage: String?
+
+    init(
+        session: FocusSession,
+        tasks: [TodoistTaskSnapshot],
+        projects: [TodoistProjectSnapshot]
+    ) {
+        self.session = session
+        self.tasks = tasks
+        self.projects = projects
+        _note = State(initialValue: session.note)
+        _selectedTaskID = State(initialValue: session.todoistTaskID)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(NSLocalizedString(
+                "SessionEditor.title",
+                comment: "Edit focus session title"
+            ))
+            .font(.title2)
+
+            Picker(
+                NSLocalizedString(
+                    "SessionEditor.task.label",
+                    comment: "Edit session task label"
+                ),
+                selection: $selectedTaskID
+            ) {
+                Text(NSLocalizedString(
+                    "TodoistTasks.noTask.label",
+                    comment: "No Todoist task label"
+                ))
+                .tag(String?.none)
+                if let oldTaskID = session.todoistTaskID,
+                   !tasks.contains(where: { $0.id == oldTaskID }) {
+                    Text(session.taskContent ?? oldTaskID)
+                        .tag(Optional(oldTaskID))
+                }
+                ForEach(tasks) { task in
+                    Text(task.content).tag(Optional(task.id))
+                }
+            }
+
+            TextField(
+                NSLocalizedString(
+                    "SessionNote.placeholder",
+                    comment: "Optional session note"
+                ),
+                text: $note,
+                axis: .vertical
+            )
+            .lineLimit(3 ... 6)
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .foregroundStyle(.red)
+                    .font(.caption)
+            }
+
+            HStack {
+                Spacer()
+                Button(NSLocalizedString(
+                    "SessionEditor.cancel.label",
+                    comment: "Cancel session edit"
+                )) {
+                    dismiss()
+                }
+                Button(NSLocalizedString(
+                    "SessionEditor.save.label",
+                    comment: "Save session edit"
+                )) {
+                    save()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(20)
+        .frame(width: 440)
+    }
+
+    private func save() {
+        do {
+            try SwiftDataSessionRepository(context: modelContext).update(
+                sessionID: session.id,
+                note: note,
+                taskSelection: selection
+            )
+            TodoistOutboxProcessor.shared.refreshState()
+            Task {
+                await TodoistOutboxProcessor.shared.process()
+            }
+            dismiss()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private var selection: TodoistTaskSelection? {
+        guard let selectedTaskID else {
+            return nil
+        }
+        if let task = tasks.first(where: { $0.id == selectedTaskID }) {
+            return TodoistTaskSelection(
+                taskID: task.id,
+                content: task.content,
+                projectID: task.projectID,
+                projectName: projects.first {
+                    $0.id == task.projectID
+                }?.name
+            )
+        }
+        guard selectedTaskID == session.todoistTaskID,
+              let content = session.taskContent,
+              let projectID = session.todoistProjectID else {
+            return nil
+        }
+        return TodoistTaskSelection(
+            taskID: selectedTaskID,
+            content: content,
+            projectID: projectID,
+            projectName: session.projectName
+        )
+    }
+}
+
 final class SessionHistoryWindowController {
     static let shared = SessionHistoryWindowController()
 
@@ -136,7 +295,7 @@ final class SessionHistoryWindowController {
 
     func show() {
         if window == nil {
-            let rootView = SessionHistoryView()
+            let rootView = StatisticsRootView()
                 .modelContainer(AppPersistence.shared)
             let window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 620, height: 440),
@@ -145,8 +304,8 @@ final class SessionHistoryWindowController {
                 defer: false
             )
             window.title = NSLocalizedString(
-                "SessionHistory.title",
-                comment: "Session history window title"
+                "Statistics.title",
+                comment: "Statistics window title"
             )
             window.contentViewController = NSHostingController(rootView: rootView)
             window.isReleasedWhenClosed = false

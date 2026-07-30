@@ -41,7 +41,7 @@ struct KeychainCredentialStore: CredentialStore {
     private let account: String
 
     init(
-        service: String = Bundle.main.bundleIdentifier ?? "com.github.ivoronin.TomatoBar",
+        service: String = Bundle.main.bundleIdentifier ?? "com.linyangfeng.tomatrace",
         account: String = "todoist-personal-api-token"
     ) {
         self.service = service

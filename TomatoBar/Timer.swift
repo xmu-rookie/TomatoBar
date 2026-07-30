@@ -1,12 +1,31 @@
 import KeyboardShortcuts
 import SwiftUI
 
+enum TomaTraceURLCommand: Equatable {
+    case startStop
+
+    init?(url: URL) {
+        guard url.scheme?.caseInsensitiveCompare("tomatrace") == .orderedSame,
+              let host = url.host else {
+            return nil
+        }
+        switch host.lowercased() {
+        case "startstop":
+            self = .startStop
+        default:
+            return nil
+        }
+    }
+}
+
 @MainActor
 final class TBTimer: ObservableObject {
     @AppStorage("stopAfterBreak") var stopAfterBreak = false
     @AppStorage("autoStartBreaks") var autoStartBreaks = true
     @AppStorage("autoStartWork") var autoStartWork = true
     @AppStorage("showTimerInMenuBar") var showTimerInMenuBar = true
+    @AppStorage("showFloatingTimer") var showFloatingTimer = false
+    @AppStorage("showFullscreenBreak") var showFullscreenBreak = false
     @AppStorage("workIntervalLength") var workIntervalLength = 25
     @AppStorage("shortRestIntervalLength") var shortRestIntervalLength = 5
     @AppStorage("longRestIntervalLength") var longRestIntervalLength = 15
@@ -48,6 +67,15 @@ final class TBTimer: ObservableObject {
         pendingNoteSessionID != nil
     }
 
+    var enhancedPresentationState: EnhancedPresentationState {
+        TimerPresentationPolicy.resolve(
+            floatingEnabled: showFloatingTimer,
+            fullscreenBreakEnabled: showFullscreenBreak,
+            status: status,
+            phase: phase
+        )
+    }
+
     init(
         sessionRepository: SessionRepository = SwiftDataSessionRepository(),
         outboxProcessor: TodoistOutboxProcessing? = nil
@@ -87,22 +115,18 @@ final class TBTimer: ObservableObject {
             print("url handling error: cannot get url")
             return
         }
-        guard let url = URL(string: urlString),
-              let scheme = url.scheme,
-              let host = url.host else {
+        guard let url = URL(string: urlString) else {
             print("url handling error: cannot parse url")
             return
         }
-        guard scheme.caseInsensitiveCompare("tomatobar") == .orderedSame else {
-            print("url handling error: unknown scheme \(scheme)")
+        guard let command = TomaTraceURLCommand(url: url) else {
+            print("url handling error: unknown command")
             return
         }
 
-        switch host.lowercased() {
-        case "startstop":
+        switch command {
+        case .startStop:
             startStop()
-        default:
-            print("url handling error: unknown command \(host)")
         }
     }
 

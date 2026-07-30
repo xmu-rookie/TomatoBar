@@ -95,6 +95,22 @@ private struct SettingsView: View {
                                        comment: "Launch at login label"))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }.toggleStyle(.switch)
+            Toggle(isOn: $timer.showFloatingTimer) {
+                Text(NSLocalizedString(
+                    "SettingsView.showFloatingTimer.label",
+                    comment: "Show floating timer label"
+                ))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .toggleStyle(.switch)
+            Toggle(isOn: $timer.showFullscreenBreak) {
+                Text(NSLocalizedString(
+                    "SettingsView.showFullscreenBreak.label",
+                    comment: "Show fullscreen break label"
+                ))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .toggleStyle(.switch)
             Spacer().frame(minHeight: 0)
         }
         .padding(4)
@@ -391,6 +407,7 @@ struct TBPopoverView: View {
                 if !timer.isActive {
                     await todoistTasks.refresh()
                 }
+                updateEnhancedWindows()
                 TBStatusItem.shared.resizePopoverToFit()
             }
             .onReceive(
@@ -413,6 +430,21 @@ struct TBPopoverView: View {
                     await todoistTasks.refresh()
                 }
             }
+            .onChange(of: timer.enhancedPresentationState) {
+                updateEnhancedWindows()
+            }
+    }
+
+    private func updateEnhancedWindows() {
+        let presentation = timer.enhancedPresentationState
+        FloatingTimerWindowController.shared.update(
+            timer: timer,
+            presentation: presentation
+        )
+        FullscreenBreakWindowController.shared.update(
+            timer: timer,
+            presentation: presentation
+        )
     }
 }
 

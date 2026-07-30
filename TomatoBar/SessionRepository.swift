@@ -6,6 +6,11 @@ protocol SessionRepository {
     func save(_ draft: FocusSessionDraft) throws -> UUID
 
     func updateNote(sessionID: UUID, note: String) throws
+    func update(
+        sessionID: UUID,
+        note: String,
+        taskSelection: TodoistTaskSelection?
+    ) throws
     func delete(sessionID: UUID) throws
     func fetchAll() throws -> [FocusSession]
 }
@@ -58,6 +63,22 @@ final class SwiftDataSessionRepository: SessionRepository {
         session.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
         try TodoistOutboxComposer(context: context)
             .updateSessionNote(session)
+        try context.save()
+    }
+
+    func update(
+        sessionID: UUID,
+        note: String,
+        taskSelection: TodoistTaskSelection?
+    ) throws {
+        guard let session = try find(sessionID: sessionID) else {
+            return
+        }
+        session.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        try TodoistOutboxComposer(context: context).reassignSession(
+            session,
+            to: taskSelection
+        )
         try context.save()
     }
 

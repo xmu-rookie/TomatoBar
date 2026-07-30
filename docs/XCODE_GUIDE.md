@@ -1,6 +1,8 @@
 # Xcode 开发、调试与发布指南
 
-这份文档面向第一次使用 Xcode 的贡献者。TomatoBar 是一个 macOS 菜单栏应用：运行后不会出现在 Dock 中，入口是屏幕右上角的番茄图标。
+这份文档面向第一次使用 Xcode 的贡献者。TomaTrace 是一个 macOS 菜单栏
+应用：运行后不会出现在 Dock 中，入口是屏幕右上角的番茄图标。Xcode 内部
+仍保留 `TomatoBar` Target 和 Scheme 名称，以减少无意义的工程文件改名。
 
 ## 先理解几个概念
 
@@ -8,7 +10,7 @@
 - **Target**：要构建的产品。当前有 `TomatoBar` 应用 Target 和 `TomatoBarTests` 单元测试 Target。
 - **Scheme**：告诉 Xcode 构建哪个 Target、使用哪种配置。
 - **Debug / Release**：Debug 用于开发调试；Release 用于最终交付。
-- **Bundle Identifier**：macOS 识别应用的唯一 ID，当前是 `com.github.ivoronin.TomatoBar`。
+- **Bundle Identifier**：macOS 识别应用的唯一 ID，当前是 `com.linyangfeng.tomatrace`。
 - **`.app`**：并不是单个可执行文件，而是包含程序、图标和资源的应用包。
 
 ## 日常运行与调试
@@ -28,9 +30,10 @@
 3. 左侧打开 `Test Navigator`（菱形图标）。所有测试右侧显示绿色对勾即为通过。
 4. 单个测试失败时，点击红色叉号查看完整错误；修复后点击测试名称旁的运行按钮重试。
 
-当前基线包含 63 个测试，覆盖计时状态、暂停区段、番茄量化、SwiftData
-持久化、Todoist 全量与增量同步、离线缓存、任务快照、网络错误、连接状态，
-幂等写入队列、评论、完成/撤销，以及真实 Keychain 的保存、更新和删除。
+当前基线包含 74 个测试，覆盖计时状态、暂停区段、番茄量化、SwiftData
+持久化、统计日期边界和排行、悬浮/全屏窗口策略、Todoist 全量与增量同步、
+离线缓存、任务快照、网络错误、连接状态、幂等写入队列、评论、完成/撤销，
+以及真实 Keychain 的保存、更新和删除。
 
 常用调试方法：
 
@@ -43,7 +46,7 @@
 手工回归至少检查：弹窗打开、开始/暂停/继续/停止、跳过休息、结束备注、专注历史、工作/休息切换、通知、声音、快捷键和退出。事件日志位于：
 
 ```text
-~/Library/Containers/<Bundle Identifier>/Data/Library/Caches/TomatoBar.log
+~/Library/Containers/com.linyangfeng.tomatrace/Data/Library/Caches/TomaTrace.log
 ```
 
 ### 常见问题
@@ -54,22 +57,22 @@
 - 终端提示 active developer directory 是 `CommandLineTools`：打开 `Xcode > Settings > Locations`，把 `Command Line Tools` 选择为当前 Xcode。
 - 报错仍未解决：保留从第一个错误开始的完整信息，不要只截最后一行。
 
-## “变成我的 App”需要改什么
+## 它现在怎样“变成你的 App”
 
-在功能稳定后统一改名，避免开发过程中制造无关差异。
+发布身份已集中为：
 
-1. 在左侧选择蓝色项目图标，再选择 `TARGETS > TomatoBar`。
-2. 在 `General > Identity` 修改：
-   - Display Name，例如 `Taskmato`
-   - Bundle Identifier，例如 `com.yourname.taskmato`
-   - Version，例如 `1.0.0`
-   - Build，例如 `1`
-3. 在 `Build Settings` 搜索 `Product Name`，把 Debug 和 Release 都改为 `Taskmato`。这决定 Finder 中的 `Taskmato.app` 文件名。Target 和 Scheme 可以暂时继续叫 `TomatoBar`。
-4. 打开 `Assets.xcassets > AppIcon`，用自己的图标替换现有尺寸。
-5. 更新项目设置中的 copyright，但保留根目录 `LICENSE` 和原作者版权声明；本项目使用 MIT License。
-6. 如需修改 `tomatobar://startStop`，同步更新 `Info.plist` 中的 URL Scheme、`Timer.swift` 的处理逻辑和 README。
+- Finder 中的应用名：`TomaTrace.app`
+- Bundle Identifier：`com.linyangfeng.tomatrace`
+- 版本号：`1.0.0`
+- URL Scheme：`tomatrace://startStop`
+- 独立的 TomaTrace 图标和版权说明
 
-修改 Bundle Identifier 后，macOS 会把它当成一个全新的应用；原版的设置和日志不会自动迁移。
+Target、Scheme 和源码目录仍叫 `TomatoBar`，这只是 Xcode 内部名称，不影响
+最终 App。根目录 `LICENSE` 和原作者归属必须继续保留，因为 TomaTrace 基于
+MIT 许可的 TomatoBar。
+
+新的 Bundle Identifier 会被 macOS 当作全新应用，因此旧 TomatoBar 的设置、
+Keychain Token 和历史不会自动迁移。这是有意隔离，避免开发版污染正式数据。
 
 ## 只安装到自己的 Mac
 
@@ -99,13 +102,24 @@
 6. 等待状态变为 `Ready to distribute`，再选择 `Export Notarized App`。
 7. 在另一台 Mac 上测试下载、首次启动、通知、登录启动和网络功能。
 
-当前项目为 CI 使用了 ad-hoc 签名设置。准备公开发布时，需要一起调整 Release 签名和 CI 工作流，不能只在 Xcode 中临时选择证书。
+当前 CI 产物不签名，只用于自动构建检查。准备公开发布时，需要一起调整
+Release 签名和 CI 工作流，不能只在 Xcode 中临时选择证书。
+
+### iCloud 的额外前提
+
+CloudKit 不是普通本地功能。Apple 要求有管理员权限的 Apple Developer
+Program Team，并在 `Signing & Capabilities` 中创建 CloudKit Container、
+启用 iCloud 和 Remote Notifications。没有 Team 时，本地计时、Todoist 和
+统计均可正常使用。当前个人版不显示 iCloud 开关，也不会假装已经完成跨设备
+同步；以后加入付费 Team 后再单独实施和验收。
 
 Apple 官方参考：
 
 - [创建 Archive](https://help.apple.com/xcode/mac/current/en.lproj/devf37a1db04.html)
 - [在 Mac App Store 之外分发](https://help.apple.com/xcode/mac/current/en.lproj/dev033e997ca.html)
 - [上传并公证 macOS App](https://help.apple.com/xcode/mac/current/en.lproj/dev88332a81e.html)
+
+仓库内的逐项操作见 [`docs/RELEASE.md`](RELEASE.md)。
 
 ## Todoist 与敏感信息
 

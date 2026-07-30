@@ -1,50 +1,47 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/ivoronin/TomatoBar/main/TomatoBar/Assets.xcassets/AppIcon.appiconset/icon_128x128%402x.png" width="128" height="128"/>
-<p>
- 
-<h1 align="center">TomatoBar</h1>
-<p align="center">
-<img src="https://img.shields.io/github/actions/workflow/status/ivoronin/TomatoBar/main.yml?branch=main"/> <img src="https://img.shields.io/github/downloads/ivoronin/TomatoBar/total"/> <img src="https://img.shields.io/github/v/release/ivoronin/TomatoBar?display_name=tag"/> <img src="https://img.shields.io/homebrew/cask/v/tomatobar"/>
+  <img src="TomatoBar/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png"
+       width="128" height="128" alt="TomaTrace icon"/>
 </p>
 
-<img
-  src="https://github.com/ivoronin/TomatoBar/raw/main/screenshot.png?raw=true"
-  alt="Screenshot"
-  width="50%"
-  align="right"
-/>
+<h1 align="center">TomaTrace</h1>
 
-## Overview
-Have you ever heard of Pomodoro? It’s a great technique to help you keep track of time and stay on task during your studies or work. Read more about it on <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Wikipedia</a>.
+TomaTrace is a native macOS 14+ menu-bar Pomodoro timer with Todoist task
+integration and local focus analytics.
 
-TomatoBar is world's neatest Pomodoro timer for the macOS menu bar. All the essential features are here - configurable
-work and rest intervals, optional sounds, discreet actionable notifications, global hotkey.
+## Features
 
-TomatoBar is sandboxed; the development version enables outbound network access for Todoist.
+- Configurable work, short-break, and long-break intervals
+- Pause, resume, skip, notifications, sounds, shortcuts, and launch at login
+- Todoist projects and active tasks with incremental sync and offline cache
+- Task-linked focus sessions, notes, completion/undo, and durable offline writes
+- Today, week, and month totals; daily trend; heatmap; task/project rankings
+- Editable local history with actual focus duration and fractional pomodoros
+- Optional floating timer and full-screen break reminder
+- English, Simplified Chinese, and Korean localization
 
-Download the latest release <a href="https://github.com/ivoronin/TomatoBar/releases/latest/">here</a> or install using Homebrew:
-```
-brew install --cask tomatobar
-```
-
-If the app doesn't start, install using the `--no-quarantine` flag:
-```
-brew install --cask --no-quarantine tomatobar
-```
+Todoist API tokens are stored only in macOS Keychain. Focus history is stored
+locally with SwiftData and remains usable without Todoist or a network
+connection.
 
 ## Development
-Development toward the Todoist-connected TomaTrace app is tracked in the Chinese-language [product and engineering roadmap](docs/TOMATRACE_PLAN.md).
 
-New to Xcode? See the Chinese-language [Xcode development, debugging, and distribution guide](docs/XCODE_GUIDE.md) for running the project, debugging errors, rebranding the app, installing it locally, and preparing a signed release.
+Open `TomatoBar.xcodeproj`, choose the shared `TomatoBar` scheme and `My Mac`,
+then press `Cmd-R`. Run the complete test suite with `Cmd-U`.
 
-## Integration with other tools
-### Event log
-TomatoBar logs state transitions in JSON format to `~/Library/Containers/com.github.ivoronin.TomatoBar/Data/Library/Caches/TomatoBar.log`. Use this data to analyze your productivity and enrich other data sources.
-### Starting and stopping the timer
-TomatoBar can be controlled using `tomatobar://` URLs. To start or stop the timer from the command line, use `open tomatobar://startStop`.
+- [Product and engineering roadmap](docs/TOMATRACE_PLAN.md)
+- [Xcode development, debugging, and distribution guide](docs/XCODE_GUIDE.md)
+- [Contributor guidelines](AGENTS.md)
 
-## Older versions
-Touch bar integration and older macOS versions (earlier than Big Sur) are supported by TomatoBar versions prior to 3.0
+The URL command `open tomatrace://startStop` starts or stops the timer. Runtime
+transition logs are written to:
 
-## Licenses
- - Timer sounds are licensed from buddhabeats
+```text
+~/Library/Containers/com.linyangfeng.tomatrace/Data/Library/Caches/TomaTrace.log
+```
+
+## Origin and license
+
+TomaTrace is based on
+[Ilya Voronin's TomatoBar](https://github.com/ivoronin/TomatoBar). The original
+copyright and MIT license are preserved in [LICENSE](LICENSE). Timer sounds
+retain their existing buddhabeats license attribution.

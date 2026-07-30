@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8A21B78727EE31A20009E5DB"
-               BuildableName = "TomatoBar.app"
+               BuildableName = "TomaTrace.app"
                BlueprintName = "TomatoBar"
                ReferencedContainer = "container:TomatoBar.xcodeproj">
             </BuildableReference>
@@ -72,7 +72,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8A21B78727EE31A20009E5DB"
-            BuildableName = "TomatoBar.app"
+            BuildableName = "TomaTrace.app"
             BlueprintName = "TomatoBar"
             ReferencedContainer = "container:TomatoBar.xcodeproj">
          </BuildableReference>
@@ -89,7 +89,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8A21B78727EE31A20009E5DB"
-            BuildableName = "TomatoBar.app"
+            BuildableName = "TomaTrace.app"
             BlueprintName = "TomatoBar"
             ReferencedContainer = "container:TomatoBar.xcodeproj">
          </BuildableReference>

@@ -1,6 +1,7 @@
 # TomaTrace 产品与工程路线图
 
-> 状态：M6「双向写回」已完成，下一阶段为 M7「统计分析」
+> 状态：M1–M9 的个人本机版范围已完成；CloudKit 和公开公证分发因无付费
+> Apple Developer Program 账号而不纳入当前交付。
 >
 > 更新规则：需求、架构或阶段状态发生变化时，必须在对应代码提交中同步更新本文。
 
@@ -177,23 +178,60 @@ TomaTrace 将在 TomatoBar 的菜单栏番茄钟基础上，提供与 Pomist 同
   任务，写入验收使用脱敏 transport fixture；真实 Token 仍只用于只读同步；
 - Debug、Release、三种本地化和新增 SwiftData schema 的实际启动检查通过。
 
-### M7：统计分析（当前）
+### M7：统计分析（已完成）
 
-- 增加独立统计窗口、汇总卡片、趋势、热力图、任务/项目排行及历史管理。
-- 所有统计以本地 session 为准，不依赖实时网络。
+- [x] 增加独立统计窗口、汇总卡片、趋势、热力图、任务/项目排行及历史管理。
+- [x] 所有统计以本地 session 为准，不依赖实时网络。
 - 验收：跨日、跨周、跨月边界正确；编辑和删除后所有统计同步变化。
 
-### M8：Pomist 增强体验
+2026-07-30 自动验证记录：
 
-- 增加可选悬浮计时器、全屏休息提示和 iCloud 同步。
-- 三项功能分别提供开关，不改变默认轻量菜单栏体验。
-- 验收：多窗口、全屏、离线和 iCloud 冲突场景不丢 session。
+- `StatisticsEngine` 按日拆分跨午夜的有效专注区间，并按本地日历计算今天、
+  本周、本月、14 日趋势和 12 周热力图；
+- 任务与项目排行使用所有本地 session 的实际时长和番茄数；无网络时结果
+  不变；
+- 历史窗口支持修改备注、重新关联缓存 Todoist 任务或改为“无任务”，删除
+  和改绑会通过既有 outbox 重算远端累计评论；
+- 4 项统计边界测试和 2 项历史改绑测试通过。
 
-### M9：品牌与分发
+### M8：Pomist 增强体验（个人版已完成）
 
-- 应用最终命名为 TomaTrace，候选 Bundle Identifier 为 `com.linyangfeng.tomatrace`；正式发布前再次确认名称和标识符可用。
-- 更新图标、显示名、URL Scheme、版权说明、签名、Hardened Runtime 和发布文档。
-- 验收：Archive 可导出并安装；公开分发版本通过 Developer ID 签名和 Apple 公证；另一台 Mac 首次启动及核心流程通过。
+- [x] 增加默认关闭的悬浮计时器和全屏休息提示开关，不改变菜单栏默认体验。
+- [x] 多窗口显示条件抽成纯策略并覆盖自动测试。
+- [ ] iCloud/CloudKit 跨设备同步：需要付费 Apple Developer Program Team、
+  CloudKit Container 和 Remote Notifications；用户选择当前不启用，界面不
+  暴露无效开关。
+- 验收：悬浮窗口仅在计时活动时显示；全屏提示仅在活动休息阶段显示；本地
+  session 仍由 SwiftData 可靠保存。
+
+2026-07-30 自动验证记录：
+
+- 3 项窗口策略测试通过，覆盖默认关闭、工作/休息悬浮显示和全屏休息条件；
+- Release 应用在隔离的数据目录中实际启动并保持运行，SwiftData store 成功
+  建立；结束验证后已停止该测试进程；
+- iCloud 被明确列为未来账号条件，而不是用本地开关冒充跨设备同步。
+
+### M9：品牌与个人分发（已完成）
+
+- [x] 应用最终命名为 TomaTrace，Bundle Identifier 为
+  `com.linyangfeng.tomatrace`。
+- [x] 更新图标、应用名、URL Scheme、版权说明、版本和发布文档。
+- [x] 生成可在本机继续通过 Xcode 导出的 Archive。
+- [ ] Developer ID 签名和 Apple 公证：需要付费 Apple Developer Program
+  账号，仅在将来公开发给其他用户时执行。
+- 验收：Debug/Release 可构建，个人 Archive 包含正确身份的双架构
+  `TomaTrace.app`；公开分发验收不属于当前个人版范围。
+
+2026-07-30 自动验证记录：
+
+- 新图标源文件为 `Icons/TomaTrace.png`，完整 AppIcon 尺寸已生成并检查；
+- `tomatrace://startStop` 品牌 URL 解析测试通过，旧 URL 和未知命令会拒绝；
+- 完整测试集 74 项全部通过；Release 无签名构建通过；
+- `/tmp/TomaTrace.xcarchive` 生成成功，内含 arm64 与 x86_64 双架构
+  `TomaTrace.app` 1.0.0（Build 1），Bundle Identifier、可执行文件和
+  `LSUIElement` 均已核对；
+- 无付费账号时 Archive 的签名身份和 Team 为空，符合本次个人源码交付边界；
+  GitHub Actions 同样仅生成未签名构建检查产物，不宣称可公开分发。
 
 ## 测试与交付标准
 
